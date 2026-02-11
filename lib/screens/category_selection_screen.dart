@@ -154,7 +154,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                   child: Text(
                     selectedCategories.isEmpty 
                         ? 'Wybierz co najmniej 1 kategorię'
-                        : 'Start gry (${selectedCategories.length})',
+                        : 'Start gry',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,

@@ -46,29 +46,28 @@ class _StartScreenState extends State<StartScreen> with SingleTickerProviderStat
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Spacer(flex: 2),
-              
-              // Logo Image
-              // Image.asset(
-              //   'assets/images/TalkTogether_logo.png',
-              //   width: 340,
-              //   height: 340,
-              //   errorBuilder: (context, error, stackTrace) {
-              //     // Fallback if logo not found
-              //     return Container(
-              //       width: 120,
-              //       height: 120,
-              //       decoration: BoxDecoration(
-              //         color: const Color(0xFFB2E0D8).withOpacity(0.3),
-              //         shape: BoxShape.circle,
-              //       ),
-              //       child: Icon(
-              //         Icons.chat_bubble_outline,
-              //         size: 60,
-              //         color: Colors.grey[600],
-              //       ),
-              //     );
-              //   },
-              // ),
+
+              Image.asset(
+                'assets/images/talk_together_logo_4.png',
+                width: 100,
+                height: 100,
+                errorBuilder: (context, error, stackTrace) {
+                  // Fallback if logo not found
+                  return Container(
+                    width: 120,
+                    height: 120,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFB2E0D8).withOpacity(0.3),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.chat_bubble_outline,
+                      size: 60,
+                      color: Colors.grey[600],
+                    ),
+                  );
+                },
+              ),
               
               const SizedBox(height: 0),
               
