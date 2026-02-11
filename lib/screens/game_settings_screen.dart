@@ -51,16 +51,16 @@ class _GameSettingsScreenState extends State<GameSettingsScreen> {
                 ),
               ),
               
-              const SizedBox(height: 16),
+              const SizedBox(height: 15),
               
               // Game description
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFB2E0D8).withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(16),
+                  color: Colors.grey[100],
+                  borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: const Color(0xFFB2E0D8).withOpacity(0.3),
+                    color: Colors.grey[200]!,
                     width: 1,
                   ),
                 ),
@@ -95,12 +95,12 @@ class _GameSettingsScreenState extends State<GameSettingsScreen> {
                 ),
               ),
               
-              const Spacer(flex: 2),
+              const SizedBox(height: 30),
               
               // Players selection
               _buildPlayerSelection(),
               
-              const SizedBox(height: 32),
+              const SizedBox(height: 30),
               
               // Time selection
               _buildTimeSelection(),

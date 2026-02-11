@@ -83,12 +83,17 @@ class SessionSummaryScreen extends StatelessWidget {
     return (maxAvg - minAvg) < 15;
   }
 
+  bool _isExactly(double value, double target, [double epsilon = 0.01]) {
+    return (value - target).abs() < epsilon;
+  }
+
   @override
   Widget build(BuildContext context) {
     final avg = _averageAgreement;
     final mostAgreement = _categoryMostAgreement;
     final mostDifference = _categoryMostDifference;
     final allSimilar = _allCategoriesSimilar;
+    final hasVotes = roundResults.isNotEmpty;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -166,7 +171,7 @@ class SessionSummaryScreen extends StatelessWidget {
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(12),
                               child: LinearProgressIndicator(
-                                value: (avg / 100).clamp(0.0, 1.0),
+                                value: hasVotes ? (avg / 100).clamp(0.0, 1.0) : 0,
                                 minHeight: 12,
                                 backgroundColor: Colors.grey[200],
                                 valueColor: const AlwaysStoppedAnimation<Color>(
@@ -177,7 +182,7 @@ class SessionSummaryScreen extends StatelessWidget {
                           ),
                           const SizedBox(width: 16),
                           Text(
-                            '${avg.round()}%',
+                            hasVotes ? '${avg.round()}%' : '—',
                             style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
@@ -186,12 +191,32 @@ class SessionSummaryScreen extends StatelessWidget {
                           ),
                         ],
                       ),
+                      if (!hasVotes) ...[
+                        const SizedBox(height: 10),
+                        Text(
+                          'Brak danych z głosowania w tej sesji.',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ),
                 const SizedBox(height: 28),
-                if (roundResults.isNotEmpty) ...[
-                  if (avg >= 45 && avg <= 55)
+                if (hasVotes) ...[
+                  if (_isExactly(avg, 100))
+                    _buildInfoCard(
+                      'Pełna zgodność! W tej sesji byliście wyjątkowo jednomyślni.',
+                      Icons.emoji_events_outlined,
+                    )
+                  else if (_isExactly(avg, 50))
+                    _buildInfoCard(
+                      'Byliście podzieleni dokładnie po równo.',
+                      Icons.balance,
+                    )
+                  else if (avg >= 45 && avg <= 55)
                     _buildInfoCard(
                       'Byliście podzieleni niemal po równo.',
                       Icons.balance,
@@ -215,7 +240,11 @@ class SessionSummaryScreen extends StatelessWidget {
                         Icons.forum_outlined,
                       ),
                   ],
-                ],
+                ] else
+                  _buildInfoCard(
+                    'To była szybka sesja. Zagrajcie kolejną rundę, aby odkryć ciekawostki o grupie.',
+                    Icons.auto_awesome_outlined,
+                  ),
                 const Spacer(),
                 SizedBox(
                   width: double.infinity,
