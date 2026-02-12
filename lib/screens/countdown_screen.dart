@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'game_screen.dart';
 import 'category_selection_screen.dart';
 
@@ -161,7 +162,7 @@ class _CountdownScreenState extends State<CountdownScreen>
                           errorBuilder: (context, error, stackTrace) {
                             // Fallback if icon not found
                             return Text(
-                              '❔',
+                              'countdown.fallback_icon'.tr(),
                               style: const TextStyle(fontSize: 80),
                             );
                           },

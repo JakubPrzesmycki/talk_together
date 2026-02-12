@@ -1,0 +1,65 @@
+{
+  "game_title": "TalkTogether",
+  "buttons": {
+    "next": "Next question",
+    "cancel": "Cancel",
+    "continue": "Continue",
+    "exit": "Exit",
+    "start": "START",
+    "start_game": "Start game",
+    "play_again": "Play again",
+    "select_at_least_one_category": "Select at least 1 category"
+  },
+  "language": {
+    "select_language": "Select language",
+    "english": "English",
+    "polish": "Polish",
+    "apply": "Apply"
+  },
+  "start_page": {
+    "tagline": "Let's start the conversation"
+  },
+  "game_settings": {
+    "title": "Game settings",
+    "how_to_play": "How to play?",
+    "how_to_play_desc": "A question with two options will appear. Each player votes, then results are shown and discussion starts!",
+    "players": "Number of players",
+    "discussion_time": "Discussion time (minutes)"
+  },
+  "category_page": {
+    "title": "Choose categories",
+    "subtitle": "You can pick more than one!"
+  },
+  "countdown": {
+    "fallback_icon": "?"
+  },
+  "game": {
+    "votes": "Votes: {}/{}",
+    "vote_singular": "{} vote",
+    "vote_plural": "{} votes",
+    "discussion_time": "Discussion time",
+    "time_up": "Time is up!",
+    "exit_title": "Leave game?",
+    "exit_message": "You will see the session summary."
+  },
+  "summary": {
+    "title": "Session summary",
+    "group_agreement": "Group agreement level",
+    "no_votes_hint": "No voting data in this session.",
+    "no_votes_card": "That was a quick session. Play another round to discover group insights.",
+    "split_evenly": "You were split exactly in half.",
+    "split_nearly": "You were split almost evenly.",
+    "full_agreement": "Perfect alignment! You were exceptionally unanimous in this session.",
+    "all_categories_similar": "Across all categories, your agreement level was similar.",
+    "most_agreement": "Most agreement in category: {}",
+    "most_difference": "Most differences in category: {}"
+  },
+  "categories": {
+    "na_luzie": "Chill",
+    "rodzinne": "Family",
+    "znajomi": "Friends",
+    "pikantne": "Spicy",
+    "szalone": "Wild",
+    "glebokie": "Deep"
+  }
+}

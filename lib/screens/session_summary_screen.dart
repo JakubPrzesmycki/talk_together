@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../models/round_result.dart';
 import 'start_screen.dart';
 import 'countdown_screen.dart';
@@ -19,6 +20,15 @@ class SessionSummaryScreen extends StatelessWidget {
     required this.numberOfPlayers,
     required this.discussionTime,
   });
+
+  static const Map<String, String> _categoryTranslationKeys = {
+    'Na luzie': 'categories.na_luzie',
+    'Rodzinne': 'categories.rodzinne',
+    'Znajomi': 'categories.znajomi',
+    'Pikantne': 'categories.pikantne',
+    'Szalone': 'categories.szalone',
+    'Głębokie': 'categories.glebokie',
+  };
 
   double get _averageAgreement {
     if (roundResults.isEmpty) return 0;
@@ -131,7 +141,7 @@ class SessionSummaryScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
                 Text(
-                  'Podsumowanie sesji',
+                  'summary.title'.tr(),
                   style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
@@ -156,7 +166,7 @@ class SessionSummaryScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Poziom zgodności grupy',
+                        'summary.group_agreement'.tr(),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -194,7 +204,7 @@ class SessionSummaryScreen extends StatelessWidget {
                       if (!hasVotes) ...[
                         const SizedBox(height: 10),
                         Text(
-                          'Brak danych z głosowania w tej sesji.',
+                          'summary.no_votes_hint'.tr(),
                           style: TextStyle(
                             fontSize: 13,
                             color: Colors.grey[600],
@@ -208,41 +218,45 @@ class SessionSummaryScreen extends StatelessWidget {
                 if (hasVotes) ...[
                   if (_isExactly(avg, 100))
                     _buildInfoCard(
-                      'Pełna zgodność! W tej sesji byliście wyjątkowo jednomyślni.',
+                      'summary.full_agreement'.tr(),
                       Icons.emoji_events_outlined,
                     )
                   else if (_isExactly(avg, 50))
                     _buildInfoCard(
-                      'Byliście podzieleni dokładnie po równo.',
+                      'summary.split_evenly'.tr(),
                       Icons.balance,
                     )
                   else if (avg >= 45 && avg <= 55)
                     _buildInfoCard(
-                      'Byliście podzieleni niemal po równo.',
+                      'summary.split_nearly'.tr(),
                       Icons.balance,
                     )
                   else if (allSimilar)
                     _buildInfoCard(
-                      'We wszystkich kategoriach mieliście podobny poziom zgodności.',
+                      'summary.all_categories_similar'.tr(),
                       Icons.extension,
                     )
                   else ...[
                     if (mostAgreement != null)
                       _buildInfoCard(
-                        'Najwięcej zgodności mieliście w kategorii: $mostAgreement',
+                        'summary.most_agreement'.tr(
+                          args: [_translateCategory(mostAgreement)],
+                        ),
                         Icons.thumb_up_outlined,
                       ),
                     if (mostAgreement != null && mostDifference != null)
                       const SizedBox(height: 12),
                     if (mostDifference != null)
                       _buildInfoCard(
-                        'Najwięcej różnic było przy pytaniach: $mostDifference',
+                        'summary.most_difference'.tr(
+                          args: [_translateCategory(mostDifference)],
+                        ),
                         Icons.forum_outlined,
                       ),
                   ],
                 ] else
                   _buildInfoCard(
-                    'To była szybka sesja. Zagrajcie kolejną rundę, aby odkryć ciekawostki o grupie.',
+                    'summary.no_votes_card'.tr(),
                     Icons.auto_awesome_outlined,
                   ),
                 const Spacer(),
@@ -259,7 +273,7 @@ class SessionSummaryScreen extends StatelessWidget {
                       elevation: 4,
                     ),
                     child: Text(
-                      'Zagraj ponownie',
+                      'buttons.play_again'.tr(),
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -275,6 +289,12 @@ class SessionSummaryScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _translateCategory(String value) {
+    final key = _categoryTranslationKeys[value];
+    if (key == null) return value;
+    return key.tr();
   }
 
   Widget _buildInfoCard(String text, IconData icon) {

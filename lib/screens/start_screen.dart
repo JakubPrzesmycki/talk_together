@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'game_settings_screen.dart';
 
 class StartScreen extends StatefulWidget {
@@ -11,6 +12,7 @@ class StartScreen extends StatefulWidget {
 class _StartScreenState extends State<StartScreen> with SingleTickerProviderStateMixin {
   late AnimationController _pulseController;
   late Animation<double> _pulseAnimation;
+  bool _isLanguageHandlePressed = false;
 
   @override
   void initState() {
@@ -41,11 +43,13 @@ class _StartScreenState extends State<StartScreen> with SingleTickerProviderStat
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Spacer(flex: 2),
+        child: Stack(
+          children: [
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Spacer(flex: 2),
 
               Image.asset(
                 'assets/images/talk_together_logo_4.png',
@@ -73,7 +77,7 @@ class _StartScreenState extends State<StartScreen> with SingleTickerProviderStat
               
               // Logo Section
               Text(
-                'TalkTogether',
+                'game_title'.tr(),
                 style: TextStyle(
                   fontSize: 48,
                   fontWeight: FontWeight.bold,
@@ -85,7 +89,7 @@ class _StartScreenState extends State<StartScreen> with SingleTickerProviderStat
               const SizedBox(height: 12),
               
               Text(
-                'Let\'s start the conversation',
+                'start_page.tagline'.tr(),
                 style: TextStyle(
                   fontSize: 16,
                   color: Colors.grey[600],
@@ -155,7 +159,7 @@ class _StartScreenState extends State<StartScreen> with SingleTickerProviderStat
                     ),
                     child: Center(
                       child: Text(
-                        'START',
+                        'buttons.start'.tr(),
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -168,11 +172,202 @@ class _StartScreenState extends State<StartScreen> with SingleTickerProviderStat
                 ),
               ),
               
-              const Spacer(flex: 2),
-              
-              const SizedBox(height: 30),
+                  const Spacer(flex: 2),
+                  
+                  const SizedBox(height: 30),
+                ],
+              ),
+            ),
+            Positioned(
+              left: -6,
+              bottom: 24,
+              child: GestureDetector(
+                onTap: _showLanguageDialog,
+                onTapDown: (_) => setState(() => _isLanguageHandlePressed = true),
+                onTapUp: (_) => setState(() => _isLanguageHandlePressed = false),
+                onTapCancel: () => setState(() => _isLanguageHandlePressed = false),
+                child: AnimatedScale(
+                  duration: const Duration(milliseconds: 130),
+                  curve: Curves.easeOutCubic,
+                  scale: _isLanguageHandlePressed ? 0.96 : 1,
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 130),
+                    curve: Curves.easeOutCubic,
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[100],
+                      borderRadius: const BorderRadius.only(
+                        topRight: Radius.circular(16),
+                        bottomRight: Radius.circular(16),
+                      ),
+                      border: Border.all(color: Colors.grey[300]!),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(
+                            _isLanguageHandlePressed ? 0.08 : 0.15,
+                          ),
+                          blurRadius: _isLanguageHandlePressed ? 6 : 10,
+                          offset: Offset(0, _isLanguageHandlePressed ? 1 : 3),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.translate,
+                          size: 15,
+                          color: Colors.grey[700],
+                        ),
+                        const SizedBox(width: 4),
+                        Icon(
+                          Icons.chevron_right,
+                          size: 16,
+                          color: Colors.grey[600],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _showLanguageDialog() async {
+    Locale selectedLocale = context.locale;
+    final Locale? changed = await showDialog<Locale>(
+      context: context,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (context, setDialogState) {
+          final bool hasChanged = selectedLocale != context.locale;
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(22),
+            ),
+            backgroundColor: Colors.white,
+            contentPadding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
+            title: Text(
+              'language.select_language'.tr(),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 21,
+                color: Colors.grey[800],
+              ),
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildLanguageTile(
+                  title: 'language.polish'.tr(),
+                  locale: const Locale('pl'),
+                  selectedLocale: selectedLocale,
+                  onTap: () => setDialogState(
+                    () => selectedLocale = const Locale('pl'),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                _buildLanguageTile(
+                  title: 'language.english'.tr(),
+                  locale: const Locale('en'),
+                  selectedLocale: selectedLocale,
+                  onTap: () => setDialogState(
+                    () => selectedLocale = const Locale('en'),
+                  ),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(),
+                child: Text(
+                  'buttons.cancel'.tr(),
+                  style: TextStyle(
+                    color: Colors.grey[600],
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              ElevatedButton(
+                onPressed: hasChanged
+                    ? () => Navigator.of(dialogContext).pop(selectedLocale)
+                    : null,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFB2E0D8),
+                  disabledBackgroundColor: Colors.grey[300],
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  elevation: hasChanged ? 3 : 0,
+                ),
+                child: Text(
+                  'language.apply'.tr(),
+                  style: TextStyle(
+                    color: Colors.grey[800],
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
             ],
+          );
+        },
+      ),
+    );
+
+    if (changed != null && mounted) {
+      await context.setLocale(changed);
+      setState(() {});
+    }
+  }
+
+  Widget _buildLanguageTile({
+    required String title,
+    required Locale locale,
+    required Locale selectedLocale,
+    required VoidCallback onTap,
+  }) {
+    final bool isSelected = locale == selectedLocale;
+    return InkWell(
+      borderRadius: BorderRadius.circular(14),
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        decoration: BoxDecoration(
+          color: isSelected ? const Color(0xFFB2E0D8).withOpacity(0.28) : Colors.grey[100],
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: isSelected ? const Color(0xFF9FD4C7) : Colors.grey[300]!,
+            width: 1.4,
           ),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              Icons.language,
+              size: 18,
+              color: isSelected ? Colors.grey[800] : Colors.grey[600],
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey[800],
+                ),
+              ),
+            ),
+            Icon(
+              isSelected ? Icons.check_circle_rounded : Icons.circle_outlined,
+              size: 20,
+              color: isSelected ? const Color(0xFF7FC4B3) : Colors.grey[500],
+            ),
+          ],
         ),
       ),
     );

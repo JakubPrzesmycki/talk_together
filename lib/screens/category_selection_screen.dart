@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'countdown_screen.dart';
 
 class CategorySelectionScreen extends StatefulWidget {
@@ -17,6 +18,14 @@ class CategorySelectionScreen extends StatefulWidget {
 
 class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
   final Set<String> selectedCategories = {};
+  static const Map<String, String> _categoryTranslationKeys = {
+    'Na luzie': 'categories.na_luzie',
+    'Rodzinne': 'categories.rodzinne',
+    'Znajomi': 'categories.znajomi',
+    'Pikantne': 'categories.pikantne',
+    'Szalone': 'categories.szalone',
+    'Głębokie': 'categories.glebokie',
+  };
   
   final Map<String, CategoryData> categories = {
     'Na luzie': CategoryData('😎', const Color(0xFFB2E0D8)),
@@ -97,7 +106,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
               
               // Header
               Text(
-                'Wybierz kategorie',
+                'category_page.title'.tr(),
                 style: TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
@@ -108,7 +117,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
               const SizedBox(height: 8),
               
               Text(
-                'Możesz wybrać więcej niż jedną!',
+                'category_page.subtitle'.tr(),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 15,
@@ -153,8 +162,8 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                   ),
                   child: Text(
                     selectedCategories.isEmpty 
-                        ? 'Wybierz co najmniej 1 kategorię'
-                        : 'Start gry',
+                        ? 'buttons.select_at_least_one_category'.tr()
+                        : 'buttons.start_game'.tr(),
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -213,7 +222,8 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              title,
+              _translateCategory(title),
+              textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 17,
                 fontWeight: FontWeight.bold,
@@ -224,6 +234,12 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
         ),
       ),
     );
+  }
+
+  String _translateCategory(String key) {
+    final translationKey = _categoryTranslationKeys[key];
+    if (translationKey == null) return key;
+    return translationKey.tr();
   }
 }
 

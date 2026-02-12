@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'dart:math';
 import '../models/question.dart';
 import '../models/round_result.dart';
@@ -131,7 +132,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     _questionAnimationController.forward();
     _buttonsAnimationController.forward();
   }
-  
+
   void _prepareQuestions() {
     allQuestions = [];
     for (String categoryName in widget.categories) {
@@ -155,6 +156,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
 
   void _loadRandomQuestion() {
     final random = Random();
+    if (allQuestions.isEmpty) return;
     
     // Animate old question out, then load new question
     if (votingComplete) {
@@ -274,7 +276,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
           borderRadius: BorderRadius.circular(20),
         ),
         title: Text(
-          'Zakończyć grę?',
+          'game.exit_title'.tr(),
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 22,
@@ -282,7 +284,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
           ),
         ),
         content: Text(
-          'Zobaczysz podsumowanie sesji.',
+          'game.exit_message'.tr(),
           style: TextStyle(
             fontSize: 16,
             color: Colors.grey[600],
@@ -292,7 +294,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
             child: Text(
-              'Anuluj',
+              'buttons.cancel'.tr(),
               style: TextStyle(
                 fontSize: 16,
                 color: Colors.grey[600],
@@ -310,7 +312,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             ),
             child: Text(
-              'Wyjdź',
+              'buttons.exit'.tr(),
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -442,7 +444,10 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
 
               // Vote counter
               Text(
-                'Głosów: ${votesOption1 + votesOption2}/${widget.numberOfPlayers}',
+                'game.votes'.tr(args: [
+                  '${votesOption1 + votesOption2}',
+                  '${widget.numberOfPlayers}',
+                ]),
                 style: TextStyle(
                   fontSize: 16,
                   color: Colors.grey[600],
@@ -471,7 +476,9 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                           child: Column(
                             children: [
                               Text(
-                                remainingSeconds > 0 ? 'Czas na rozmowę' : 'Czas minął!',
+                                remainingSeconds > 0
+                                    ? 'game.discussion_time'.tr()
+                                    : 'game.time_up'.tr(),
                                 style: TextStyle(
                                   fontSize: 16,
                                   color: Colors.grey[700],
@@ -502,7 +509,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                             ),
                           ),
                           child: Text(
-                            'Następne pytanie',
+                            'buttons.next'.tr(),
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -571,7 +578,9 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                       ),
                     ),
                     Text(
-                      '$votes ${votes == 1 ? 'głos' : 'głosy'}',
+                      votes == 1
+                          ? 'game.vote_singular'.tr(args: ['$votes'])
+                          : 'game.vote_plural'.tr(args: ['$votes']),
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.grey[700],

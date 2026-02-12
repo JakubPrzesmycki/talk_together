@@ -1,0 +1,65 @@
+{
+  "game_title": "TalkTogether",
+  "buttons": {
+    "next": "Następne pytanie",
+    "cancel": "Anuluj",
+    "continue": "Dalej",
+    "exit": "Wyjdź",
+    "start": "START",
+    "start_game": "Start gry",
+    "play_again": "Zagraj ponownie",
+    "select_at_least_one_category": "Wybierz co najmniej 1 kategorię"
+  },
+  "language": {
+    "select_language": "Wybierz język",
+    "english": "Angielski",
+    "polish": "Polski",
+    "apply": "Zastosuj"
+  },
+  "start_page": {
+    "tagline": "Zacznijmy rozmowę"
+  },
+  "game_settings": {
+    "title": "Ustawienia gry",
+    "how_to_play": "Jak grać?",
+    "how_to_play_desc": "Wyświetli się pytanie z dwiema opcjami. Każdy gracz głosuje, a po zakończeniu głosowania wyświetlają się wyniki i rozpoczyna rozmowa!",
+    "players": "Liczba graczy",
+    "discussion_time": "Czas rozmowy (minuty)"
+  },
+  "category_page": {
+    "title": "Wybierz kategorie",
+    "subtitle": "Możesz wybrać więcej niż jedną!"
+  },
+  "countdown": {
+    "fallback_icon": "?"
+  },
+  "game": {
+    "votes": "Głosów: {}/{}",
+    "vote_singular": "{} głos",
+    "vote_plural": "{} głosy",
+    "discussion_time": "Czas na rozmowę",
+    "time_up": "Czas minął!",
+    "exit_title": "Zakończyć grę?",
+    "exit_message": "Zobaczysz podsumowanie sesji."
+  },
+  "summary": {
+    "title": "Podsumowanie sesji",
+    "group_agreement": "Poziom zgodności grupy",
+    "no_votes_hint": "Brak danych z głosowania w tej sesji.",
+    "no_votes_card": "To była szybka sesja. Zagrajcie kolejną rundę, aby odkryć ciekawostki o grupie.",
+    "split_evenly": "Byliście podzieleni dokładnie po równo.",
+    "split_nearly": "Byliście podzieleni niemal po równo.",
+    "full_agreement": "Pełna zgodność! W tej sesji byliście wyjątkowo jednomyślni.",
+    "all_categories_similar": "We wszystkich kategoriach mieliście podobny poziom zgodności.",
+    "most_agreement": "Najwięcej zgodności mieliście w kategorii: {}",
+    "most_difference": "Najwięcej różnic było przy pytaniach: {}"
+  },
+  "categories": {
+    "na_luzie": "Na luzie",
+    "rodzinne": "Rodzinne",
+    "znajomi": "Znajomi",
+    "pikantne": "Pikantne",
+    "szalone": "Szalone",
+    "glebokie": "Głębokie"
+  }
+}

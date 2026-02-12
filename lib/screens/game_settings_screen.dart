@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'category_selection_screen.dart';
 
 class GameSettingsScreen extends StatefulWidget {
@@ -43,7 +44,7 @@ class _GameSettingsScreenState extends State<GameSettingsScreen> {
               
               // Header
               Text(
-                'Ustawienia gry',
+                'game_settings.title'.tr(),
                 style: TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
@@ -72,7 +73,7 @@ class _GameSettingsScreenState extends State<GameSettingsScreen> {
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(
-                            'Jak grać?',
+                            'game_settings.how_to_play'.tr(),
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -84,7 +85,7 @@ class _GameSettingsScreenState extends State<GameSettingsScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Wyświetli się pytanie z dwoma opcjami. Każdy gracz głosuje, a po zakończeniu głosowania wyświetlają się wyniki i rozpoczyna rozmowa!',
+                      'game_settings.how_to_play_desc'.tr(),
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.grey[700],
@@ -149,7 +150,7 @@ class _GameSettingsScreenState extends State<GameSettingsScreen> {
                     elevation: 4,
                   ),
                   child: Text(
-                    'Dalej',
+                    'buttons.continue'.tr(),
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -181,7 +182,7 @@ class _GameSettingsScreenState extends State<GameSettingsScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Liczba graczy',
+                'game_settings.players'.tr(),
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
@@ -263,7 +264,7 @@ class _GameSettingsScreenState extends State<GameSettingsScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Czas rozmowy (minuty)',
+            'game_settings.discussion_time'.tr(),
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
