@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'category_selection_screen.dart';
+import '../utils/app_scale.dart';
 
 class GameSettingsScreen extends StatefulWidget {
   const GameSettingsScreen({super.key});
@@ -15,100 +16,110 @@ class _GameSettingsScreenState extends State<GameSettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final s = AppScale.of(context);
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          padding: EdgeInsets.symmetric(horizontal: s.w(24)),
           child: Column(
             children: [
-              const SizedBox(height: 20),
-              
-              // Back button
-              Align(
-                alignment: Alignment.centerLeft,
-                child: IconButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  icon: Icon(
-                    Icons.arrow_back_ios_new,
-                    color: Colors.grey[700],
-                    size: 24,
-                  ),
-                  padding: EdgeInsets.zero,
-                ),
-              ),
-              
-              const Spacer(flex: 1),
-              
-              // Header
-              Text(
-                'game_settings.title'.tr(),
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey[800],
-                ),
-              ),
-              
-              const SizedBox(height: 15),
-              
-              // Game description
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.grey[100],
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: Colors.grey[200]!,
-                    width: 1,
-                  ),
-                ),
-                child:                   Column(
-                  children: [
-                    Row(
-                      children: [
-                        const Text('💬', style: TextStyle(fontSize: 24)),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            'game_settings.how_to_play'.tr(),
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey[800],
-                            ),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      SizedBox(height: s.h(20)),
+
+                      // Back button
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: IconButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          icon: Icon(
+                            Icons.arrow_back_ios_new,
+                            color: Colors.grey[700],
+                            size: s.r(24),
+                          ),
+                          padding: EdgeInsets.zero,
+                        ),
+                      ),
+
+                      SizedBox(height: s.h(12)),
+
+                      // Header
+                      Text(
+                        'game_settings.title'.tr(),
+                        style: TextStyle(
+                          fontSize: s.sp(32),
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey[800],
+                        ),
+                      ),
+
+                      SizedBox(height: s.h(15)),
+
+                      // Game description
+                      Container(
+                        padding: EdgeInsets.all(s.r(16)),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[100],
+                          borderRadius: BorderRadius.circular(s.r(20)),
+                          border: Border.all(
+                            color: Colors.grey[200]!,
+                            width: 1,
                           ),
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'game_settings.how_to_play_desc'.tr(),
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[700],
-                        height: 1.4,
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                Text('💬', style: TextStyle(fontSize: s.sp(24))),
+                                SizedBox(width: s.w(12)),
+                                Expanded(
+                                  child: Text(
+                                    'game_settings.how_to_play'.tr(),
+                                    style: TextStyle(
+                                      fontSize: s.sp(16),
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.grey[800],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: s.h(8)),
+                            Text(
+                              'game_settings.how_to_play_desc'.tr(),
+                              style: TextStyle(
+                                fontSize: s.sp(14),
+                                color: Colors.grey[700],
+                                height: 1.4,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+
+                      SizedBox(height: s.h(30)),
+
+                      // Players selection
+                      _buildPlayerSelection(),
+
+                      SizedBox(height: s.h(30)),
+
+                      // Time selection
+                      _buildTimeSelection(),
+
+                      SizedBox(height: s.h(20)),
+                    ],
+                  ),
                 ),
               ),
-              
-              const SizedBox(height: 30),
-              
-              // Players selection
-              _buildPlayerSelection(),
-              
-              const SizedBox(height: 30),
-              
-              // Time selection
-              _buildTimeSelection(),
-              
-              const Spacer(flex: 3),
-              
-              // Continue button
+
+              // Continue button aligned like next screen CTA
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -143,25 +154,24 @@ class _GameSettingsScreenState extends State<GameSettingsScreen> {
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFB2E0D8),
-                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    padding: EdgeInsets.symmetric(vertical: s.h(20)),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
+                      borderRadius: BorderRadius.circular(s.r(30)),
                     ),
                     elevation: 4,
                   ),
                   child: Text(
                     'buttons.continue'.tr(),
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: s.sp(20),
                       fontWeight: FontWeight.bold,
                       color: Colors.grey[800],
-                      letterSpacing: 1,
+                      letterSpacing: s.r(1),
                     ),
                   ),
                 ),
               ),
-              
-              const SizedBox(height: 40),
+              SizedBox(height: s.h(20)),
             ],
           ),
         ),
@@ -170,11 +180,12 @@ class _GameSettingsScreenState extends State<GameSettingsScreen> {
   }
 
   Widget _buildPlayerSelection() {
+    final s = AppScale.of(context);
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(s.r(24)),
       decoration: BoxDecoration(
         color: Colors.grey[100],
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(s.r(20)),
       ),
       child: Column(
         children: [
@@ -184,21 +195,24 @@ class _GameSettingsScreenState extends State<GameSettingsScreen> {
               Text(
                 'game_settings.players'.tr(),
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: s.sp(18),
                   fontWeight: FontWeight.w600,
                   color: Colors.grey[800],
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: EdgeInsets.symmetric(
+                  horizontal: s.w(16),
+                  vertical: s.h(8),
+                ),
                 decoration: BoxDecoration(
                   color: const Color(0xFFB2E0D8),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(s.r(12)),
                 ),
                 child: Text(
                   '$selectedPlayers',
                   style: TextStyle(
-                    fontSize: 24,
+                    fontSize: s.sp(24),
                     fontWeight: FontWeight.bold,
                     color: Colors.grey[800],
                   ),
@@ -206,12 +220,12 @@ class _GameSettingsScreenState extends State<GameSettingsScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: s.h(16)),
           SliderTheme(
             data: SliderThemeData(
-              trackHeight: 6,
-              thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 12),
-              overlayShape: const RoundSliderOverlayShape(overlayRadius: 24),
+              trackHeight: s.h(6),
+              thumbShape: RoundSliderThumbShape(enabledThumbRadius: s.r(12)),
+              overlayShape: RoundSliderOverlayShape(overlayRadius: s.r(24)),
             ),
             child: Slider(
               value: selectedPlayers.toDouble(),
@@ -233,14 +247,14 @@ class _GameSettingsScreenState extends State<GameSettingsScreen> {
               Text(
                 '2',
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: s.sp(14),
                   color: Colors.grey[600],
                 ),
               ),
               Text(
                 '20',
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: s.sp(14),
                   color: Colors.grey[600],
                 ),
               ),
@@ -252,13 +266,14 @@ class _GameSettingsScreenState extends State<GameSettingsScreen> {
   }
 
   Widget _buildTimeSelection() {
+    final s = AppScale.of(context);
     final times = [1, 2, 3, 5, 10];
     
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(s.r(24)),
       decoration: BoxDecoration(
         color: Colors.grey[100],
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(s.r(20)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -266,12 +281,12 @@ class _GameSettingsScreenState extends State<GameSettingsScreen> {
           Text(
             'game_settings.discussion_time'.tr(),
             style: TextStyle(
-              fontSize: 18,
+              fontSize: s.sp(18),
               fontWeight: FontWeight.w600,
               color: Colors.grey[800],
             ),
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: s.h(20)),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: times.map((time) {
@@ -283,11 +298,11 @@ class _GameSettingsScreenState extends State<GameSettingsScreen> {
                   });
                 },
                 child: Container(
-                  width: 58,
-                  height: 58,
+                  width: s.w(58),
+                  height: s.w(58),
                   decoration: BoxDecoration(
                     color: isSelected ? const Color(0xFFB2E0D8) : Colors.white,
-                    borderRadius: BorderRadius.circular(14),
+                    borderRadius: BorderRadius.circular(s.r(14)),
                     border: Border.all(
                       color: isSelected ? const Color(0xFFB2E0D8) : Colors.grey[300]!,
                       width: 2,
@@ -297,7 +312,7 @@ class _GameSettingsScreenState extends State<GameSettingsScreen> {
                     child: Text(
                       '$time',
                       style: TextStyle(
-                        fontSize: 24,
+                        fontSize: s.sp(24),
                         fontWeight: FontWeight.bold,
                         color: isSelected ? Colors.grey[800] : Colors.grey[600],
                       ),

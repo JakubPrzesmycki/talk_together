@@ -4,6 +4,7 @@ import '../models/round_result.dart';
 import 'start_screen.dart';
 import 'countdown_screen.dart';
 import 'category_selection_screen.dart';
+import '../utils/app_scale.dart';
 
 class SessionSummaryScreen extends StatelessWidget {
   final List<RoundResult> roundResults;
@@ -99,6 +100,7 @@ class SessionSummaryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final s = AppScale.of(context);
     final avg = _averageAgreement;
     final mostAgreement = _categoryMostAgreement;
     final mostDifference = _categoryMostDifference;
@@ -121,11 +123,11 @@ class SessionSummaryScreen extends StatelessWidget {
         ),
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            padding: EdgeInsets.symmetric(horizontal: s.w(24)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const SizedBox(height: 16),
+                SizedBox(height: s.h(16)),
                 Row(
                   children: [
                     IconButton(
@@ -133,32 +135,32 @@ class SessionSummaryScreen extends StatelessWidget {
                       icon: Icon(
                         Icons.close,
                         color: Colors.grey[700],
-                        size: 28,
+                        size: s.r(28),
                       ),
                       padding: EdgeInsets.zero,
                     ),
                   ],
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: s.h(24)),
                 Text(
                   'summary.title'.tr(),
                   style: TextStyle(
-                    fontSize: 28,
+                    fontSize: s.sp(28),
                     fontWeight: FontWeight.bold,
                     color: Colors.grey[800],
                   ),
                 ),
-                const SizedBox(height: 32),
+                SizedBox(height: s.h(32)),
                 Container(
-                  padding: const EdgeInsets.all(24),
+                  padding: EdgeInsets.all(s.r(24)),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(s.r(20)),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.grey.withOpacity(0.15),
-                        blurRadius: 20,
-                        offset: const Offset(0, 6),
+                        blurRadius: s.r(20),
+                        offset: Offset(0, s.h(6)),
                       ),
                     ],
                   ),
@@ -168,21 +170,21 @@ class SessionSummaryScreen extends StatelessWidget {
                       Text(
                         'summary.group_agreement'.tr(),
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: s.sp(16),
                           fontWeight: FontWeight.w600,
                           color: Colors.grey[700],
                         ),
                       ),
-                      const SizedBox(height: 12),
+                      SizedBox(height: s.h(12)),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Expanded(
                             child: ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(s.r(12)),
                               child: LinearProgressIndicator(
                                 value: hasVotes ? (avg / 100).clamp(0.0, 1.0) : 0,
-                                minHeight: 12,
+                                minHeight: s.h(12),
                                 backgroundColor: Colors.grey[200],
                                 valueColor: const AlwaysStoppedAnimation<Color>(
                                   Color(0xFFB2E0D8),
@@ -190,11 +192,11 @@ class SessionSummaryScreen extends StatelessWidget {
                               ),
                             ),
                           ),
-                          const SizedBox(width: 16),
+                          SizedBox(width: s.w(16)),
                           Text(
                             hasVotes ? '${avg.round()}%' : '—',
                             style: TextStyle(
-                              fontSize: 24,
+                              fontSize: s.sp(24),
                               fontWeight: FontWeight.bold,
                               color: Colors.grey[800],
                             ),
@@ -202,11 +204,11 @@ class SessionSummaryScreen extends StatelessWidget {
                         ],
                       ),
                       if (!hasVotes) ...[
-                        const SizedBox(height: 10),
+                        SizedBox(height: s.h(10)),
                         Text(
                           'summary.no_votes_hint'.tr(),
                           style: TextStyle(
-                            fontSize: 13,
+                            fontSize: s.sp(13),
                             color: Colors.grey[600],
                           ),
                         ),
@@ -214,40 +216,46 @@ class SessionSummaryScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(height: 28),
+                SizedBox(height: s.h(28)),
                 if (hasVotes) ...[
                   if (_isExactly(avg, 100))
                     _buildInfoCard(
+                      context,
                       'summary.full_agreement'.tr(),
                       Icons.emoji_events_outlined,
                     )
                   else if (_isExactly(avg, 50))
                     _buildInfoCard(
+                      context,
                       'summary.split_evenly'.tr(),
                       Icons.balance,
                     )
                   else if (avg >= 45 && avg <= 55)
                     _buildInfoCard(
+                      context,
                       'summary.split_nearly'.tr(),
                       Icons.balance,
                     )
                   else if (allSimilar)
                     _buildInfoCard(
+                      context,
                       'summary.all_categories_similar'.tr(),
                       Icons.extension,
                     )
                   else ...[
                     if (mostAgreement != null)
                       _buildInfoCard(
+                        context,
                         'summary.most_agreement'.tr(
                           args: [_translateCategory(mostAgreement)],
                         ),
                         Icons.thumb_up_outlined,
                       ),
                     if (mostAgreement != null && mostDifference != null)
-                      const SizedBox(height: 12),
+                      SizedBox(height: s.h(12)),
                     if (mostDifference != null)
                       _buildInfoCard(
+                        context,
                         'summary.most_difference'.tr(
                           args: [_translateCategory(mostDifference)],
                         ),
@@ -256,6 +264,7 @@ class SessionSummaryScreen extends StatelessWidget {
                   ],
                 ] else
                   _buildInfoCard(
+                    context,
                     'summary.no_votes_card'.tr(),
                     Icons.auto_awesome_outlined,
                   ),
@@ -266,23 +275,23 @@ class SessionSummaryScreen extends StatelessWidget {
                     onPressed: () => _playAgain(context),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFB2E0D8),
-                      padding: const EdgeInsets.symmetric(vertical: 18),
+                      padding: EdgeInsets.symmetric(vertical: s.h(18)),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
+                        borderRadius: BorderRadius.circular(s.r(30)),
                       ),
                       elevation: 4,
                     ),
                     child: Text(
                       'buttons.play_again'.tr(),
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: s.sp(18),
                         fontWeight: FontWeight.bold,
                         color: Colors.grey[800],
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: s.h(24)),
               ],
             ),
           ),
@@ -297,24 +306,25 @@ class SessionSummaryScreen extends StatelessWidget {
     return key.tr();
   }
 
-  Widget _buildInfoCard(String text, IconData icon) {
+  Widget _buildInfoCard(BuildContext context, String text, IconData icon) {
+    final s = AppScale.of(context);
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(s.r(20)),
       decoration: BoxDecoration(
         color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(s.r(16)),
         border: Border.all(color: Colors.grey[200]!),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 24, color: Colors.grey[600]),
-          const SizedBox(width: 14),
+          Icon(icon, size: s.r(24), color: Colors.grey[600]),
+          SizedBox(width: s.w(14)),
           Expanded(
             child: Text(
               text,
               style: TextStyle(
-                fontSize: 15,
+                fontSize: s.sp(15),
                 color: Colors.grey[700],
                 height: 1.4,
               ),

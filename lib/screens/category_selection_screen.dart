@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'countdown_screen.dart';
+import '../utils/app_scale.dart';
 
 class CategorySelectionScreen extends StatefulWidget {
   final int numberOfPlayers;
@@ -77,14 +78,20 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final s = AppScale.of(context);
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    final isTabletLike = screenWidth >= 700;
+    final crossAxisCount = isTabletLike ? 3 : 2;
+    final gridAspectRatio = isTabletLike ? 1.05 : 1.15;
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          padding: EdgeInsets.symmetric(horizontal: s.w(24)),
           child: Column(
             children: [
-              const SizedBox(height: 20),
+              SizedBox(height: s.h(20)),
               
               // Back button
               Align(
@@ -96,55 +103,66 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                   icon: Icon(
                     Icons.arrow_back_ios_new,
                     color: Colors.grey[700],
-                    size: 24,
+                    size: s.r(24),
                   ),
                   padding: EdgeInsets.zero,
                 ),
               ),
               
-              const SizedBox(height: 20),
+              SizedBox(height: s.h(20)),
               
               // Header
               Text(
                 'category_page.title'.tr(),
                 style: TextStyle(
-                  fontSize: 32,
+                  fontSize: s.sp(32),
                   fontWeight: FontWeight.bold,
                   color: Colors.grey[800],
                 ),
               ),
               
-              const SizedBox(height: 8),
+              SizedBox(height: s.h(8)),
               
               Text(
                 'category_page.subtitle'.tr(),
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 15,
+                  fontSize: s.sp(15),
                   color: Colors.grey[600],
                 ),
               ),
               
-              const SizedBox(height: 48),
+              SizedBox(height: s.h(20)),
               
               // Categories Grid
               Expanded(
-                child: GridView.count(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                  childAspectRatio: 1.15,
-                  children: categories.entries.map((entry) {
-                    return _buildCategoryCard(
-                      entry.key,
-                      entry.value.emoji,
-                      entry.value.color,
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    return Center(
+                      child: SizedBox(
+                        width: constraints.maxWidth,
+                        child: GridView.count(
+                          crossAxisCount: crossAxisCount,
+                          crossAxisSpacing: s.w(16),
+                          mainAxisSpacing: s.h(16),
+                          childAspectRatio: gridAspectRatio,
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          children: categories.entries.map((entry) {
+                            return _buildCategoryCard(
+                              entry.key,
+                              entry.value.emoji,
+                              entry.value.color,
+                            );
+                          }).toList(),
+                        ),
+                      ),
                     );
-                  }).toList(),
+                  },
                 ),
               ),
               
-              const SizedBox(height: 20),
+              SizedBox(height: s.h(20)),
               
               // Start button
               SizedBox(
@@ -154,9 +172,9 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFB2E0D8),
                     disabledBackgroundColor: Colors.grey[300],
-                    padding: const EdgeInsets.symmetric(vertical: 18),
+                    padding: EdgeInsets.symmetric(vertical: s.h(18)),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
+                      borderRadius: BorderRadius.circular(s.r(30)),
                     ),
                     elevation: selectedCategories.isEmpty ? 0 : 4,
                   ),
@@ -165,7 +183,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                         ? 'buttons.select_at_least_one_category'.tr()
                         : 'buttons.start_game'.tr(),
                     style: TextStyle(
-                      fontSize: 18,
+                      fontSize: s.sp(18),
                       fontWeight: FontWeight.bold,
                       color: selectedCategories.isEmpty 
                           ? Colors.grey[600]
@@ -175,7 +193,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
                 ),
               ),
               
-              const SizedBox(height: 20),
+              SizedBox(height: s.h(20)),
             ],
           ),
         ),
@@ -188,6 +206,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
     String emoji,
     Color color,
   ) {
+    final s = AppScale.of(context);
     final isSelected = selectedCategories.contains(title);
     
     Color _darkenColor(Color color, [double amount = 0.2]) {
@@ -201,15 +220,15 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
       child: Container(
         decoration: BoxDecoration(
           color: color,
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(s.r(24)),
           border: isSelected
-              ? Border.all(color: _darkenColor(color), width: 4)
+              ? Border.all(color: _darkenColor(color), width: s.r(4))
               : null,
           boxShadow: [
             BoxShadow(
               color: color.withOpacity(0.4),
-              blurRadius: 12,
-              offset: const Offset(0, 6),
+              blurRadius: s.r(12),
+              offset: Offset(0, s.h(6)),
             ),
           ],
         ),
@@ -218,14 +237,14 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
           children: [
             Text(
               emoji,
-              style: const TextStyle(fontSize: 48),
+              style: TextStyle(fontSize: s.sp(48)),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: s.h(8)),
             Text(
               _translateCategory(title),
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 17,
+                fontSize: s.sp(17),
                 fontWeight: FontWeight.bold,
                 color: Colors.grey[800],
               ),

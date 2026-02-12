@@ -22,7 +22,7 @@
     "tagline": "Empecemos la conversación"
   },
   "game_settings": {
-    "title": "Configuración del juego",
+    "title": "Configuración",
     "how_to_play": "¿Cómo jugar?",
     "how_to_play_desc": "Aparecerá una pregunta con dos opciones. Cada jugador vota, luego se muestran los resultados y comienza la conversación.",
     "players": "Número de jugadores",
