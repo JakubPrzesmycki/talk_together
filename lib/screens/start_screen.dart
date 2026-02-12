@@ -57,7 +57,7 @@ class _StartScreenState extends State<StartScreen> with SingleTickerProviderStat
                   const Spacer(flex: 2),
 
               Image.asset(
-                'assets/images/talk_together_logo_4.png',
+                'assets/images/talk_together_logo.png',
                     width: s.w(100),
                     height: s.w(100),
                 errorBuilder: (context, error, stackTrace) {
