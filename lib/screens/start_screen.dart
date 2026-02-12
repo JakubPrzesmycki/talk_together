@@ -278,6 +278,24 @@ class _StartScreenState extends State<StartScreen> with SingleTickerProviderStat
                     () => selectedLocale = const Locale('en'),
                   ),
                 ),
+                const SizedBox(height: 10),
+                _buildLanguageTile(
+                  title: 'language.spanish'.tr(),
+                  locale: const Locale('es'),
+                  selectedLocale: selectedLocale,
+                  onTap: () => setDialogState(
+                    () => selectedLocale = const Locale('es'),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                _buildLanguageTile(
+                  title: 'language.french'.tr(),
+                  locale: const Locale('fr'),
+                  selectedLocale: selectedLocale,
+                  onTap: () => setDialogState(
+                    () => selectedLocale = const Locale('fr'),
+                  ),
+                ),
               ],
             ),
             actions: [

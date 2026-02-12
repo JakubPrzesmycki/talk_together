@@ -1,0 +1,67 @@
+{
+  "game_title": "TalkTogether",
+  "buttons": {
+    "next": "Siguiente pregunta",
+    "cancel": "Cancelar",
+    "continue": "Continuar",
+    "exit": "Salir",
+    "start": "INICIAR",
+    "start_game": "Empezar juego",
+    "play_again": "Jugar de nuevo",
+    "select_at_least_one_category": "Selecciona al menos 1 categoría"
+  },
+  "language": {
+    "select_language": "Seleccionar idioma",
+    "english": "Inglés",
+    "polish": "Polaco",
+    "spanish": "Español",
+    "french": "Francés",
+    "apply": "Aplicar"
+  },
+  "start_page": {
+    "tagline": "Empecemos la conversación"
+  },
+  "game_settings": {
+    "title": "Configuración del juego",
+    "how_to_play": "¿Cómo jugar?",
+    "how_to_play_desc": "Aparecerá una pregunta con dos opciones. Cada jugador vota, luego se muestran los resultados y comienza la conversación.",
+    "players": "Número de jugadores",
+    "discussion_time": "Tiempo de conversación (minutos)"
+  },
+  "category_page": {
+    "title": "Elige categorías",
+    "subtitle": "¡Puedes elegir más de una!"
+  },
+  "countdown": {
+    "fallback_icon": "?"
+  },
+  "game": {
+    "votes": "Votos: {}/{}",
+    "vote_singular": "{} voto",
+    "vote_plural": "{} votos",
+    "discussion_time": "Tiempo de conversación",
+    "time_up": "¡Se acabó el tiempo!",
+    "exit_title": "¿Salir del juego?",
+    "exit_message": "Verás el resumen de la sesión."
+  },
+  "summary": {
+    "title": "Resumen de la sesión",
+    "group_agreement": "Nivel de acuerdo del grupo",
+    "no_votes_hint": "No hay datos de votación en esta sesión.",
+    "no_votes_card": "Fue una sesión rápida. Jueguen otra ronda para descubrir curiosidades del grupo.",
+    "split_evenly": "Estuvieron divididos exactamente por igual.",
+    "split_nearly": "Estuvieron divididos casi por igual.",
+    "full_agreement": "¡Acuerdo total! En esta sesión fueron excepcionalmente unánimes.",
+    "all_categories_similar": "En todas las categorías tuvieron un nivel de acuerdo similar.",
+    "most_agreement": "Más acuerdo en la categoría: {}",
+    "most_difference": "Más diferencias en la categoría: {}"
+  },
+  "categories": {
+    "na_luzie": "Relax",
+    "rodzinne": "Familia",
+    "znajomi": "Amigos",
+    "pikantne": "Picante",
+    "szalone": "Locas",
+    "glebokie": "Profundas"
+  }
+}
