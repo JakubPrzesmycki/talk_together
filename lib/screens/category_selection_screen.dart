@@ -20,21 +20,21 @@ class CategorySelectionScreen extends StatefulWidget {
 class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
   final Set<String> selectedCategories = {};
   static const Map<String, String> _categoryTranslationKeys = {
-    'Na luzie': 'categories.na_luzie',
-    'Rodzinne': 'categories.rodzinne',
-    'Znajomi': 'categories.znajomi',
-    'Pikantne': 'categories.pikantne',
-    'Szalone': 'categories.szalone',
-    'Głębokie': 'categories.glebokie',
+    'chill': 'categories.chill',
+    'family': 'categories.family',
+    'friends': 'categories.friends',
+    'spicy': 'categories.spicy',
+    'wild': 'categories.wild',
+    'deep': 'categories.deep',
   };
   
   final Map<String, CategoryData> categories = {
-    'Na luzie': CategoryData('😎', const Color(0xFFB2E0D8)),
-    'Rodzinne': CategoryData('👨‍👩‍👧‍👦', const Color(0xFFFFD4B8)),
-    'Znajomi': CategoryData('🎉', const Color(0xFFFFF4B8)),
-    'Pikantne': CategoryData('🌶️', const Color(0xFFFFB8C6)),
-    'Szalone': CategoryData('🤪', const Color(0xFFD4B8FF)),
-    'Głębokie': CategoryData('💭', const Color(0xFFB8D4FF)),
+    'chill': CategoryData('😎', const Color(0xFFB2E0D8)),
+    'family': CategoryData('👨‍👩‍👧‍👦', const Color(0xFFFFD4B8)),
+    'friends': CategoryData('🎉', const Color(0xFFFFF4B8)),
+    'spicy': CategoryData('🌶️', const Color(0xFFFFB8C6)),
+    'wild': CategoryData('🤪', const Color(0xFFD4B8FF)),
+    'deep': CategoryData('💭', const Color(0xFFB8D4FF)),
   };
 
   void _toggleCategory(String category) {

@@ -1,0 +1,106 @@
+{
+  "categories": {
+    "chill": [
+      {
+        "text": "Movie at home or cinema night?",
+        "option1": "Movie at home",
+        "option2": "Cinema night"
+      },
+      {
+        "text": "Sea or mountains?",
+        "option1": "Sea",
+        "option2": "Mountains"
+      },
+      {
+        "text": "Pizza or burger?",
+        "option1": "Pizza",
+        "option2": "Burger"
+      }
+    ],
+    "family": [
+      {
+        "text": "Board game or card game?",
+        "option1": "Board game",
+        "option2": "Card game"
+      },
+      {
+        "text": "Cooking together or ordering food?",
+        "option1": "Cooking together",
+        "option2": "Ordering food"
+      },
+      {
+        "text": "Bike trip or walk?",
+        "option1": "Bike trip",
+        "option2": "Walk"
+      }
+    ],
+    "friends": [
+      {
+        "text": "Party at home or at a club?",
+        "option1": "At home",
+        "option2": "At a club"
+      },
+      {
+        "text": "Karaoke or quiz?",
+        "option1": "Karaoke",
+        "option2": "Quiz"
+      },
+      {
+        "text": "BBQ or restaurant?",
+        "option1": "BBQ",
+        "option2": "Restaurant"
+      }
+    ],
+    "spicy": [
+      {
+        "text": "Blind date or speed dating?",
+        "option1": "Blind date",
+        "option2": "Speed dating"
+      },
+      {
+        "text": "Kiss or cuddle?",
+        "option1": "Kiss",
+        "option2": "Cuddle"
+      },
+      {
+        "text": "Romantic evening or spontaneous adventure?",
+        "option1": "Romantic evening",
+        "option2": "Spontaneous adventure"
+      }
+    ],
+    "wild": [
+      {
+        "text": "Bungee jump or skydiving?",
+        "option1": "Bungee jump",
+        "option2": "Skydiving"
+      },
+      {
+        "text": "Tattoo or piercing?",
+        "option1": "Tattoo",
+        "option2": "Piercing"
+      },
+      {
+        "text": "Hitchhiking trip or backpacking?",
+        "option1": "Hitchhiking",
+        "option2": "Backpacking"
+      }
+    ],
+    "deep": [
+      {
+        "text": "Happiness or success?",
+        "option1": "Happiness",
+        "option2": "Success"
+      },
+      {
+        "text": "Past or future?",
+        "option1": "Past",
+        "option2": "Future"
+      },
+      {
+        "text": "Wisdom or wealth?",
+        "option1": "Wisdom",
+        "option2": "Wealth"
+      }
+    ]
+  }
+}

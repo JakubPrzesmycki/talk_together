@@ -57,11 +57,11 @@
     "most_difference": "Most differences in category: {}"
   },
   "categories": {
-    "na_luzie": "Chill",
-    "rodzinne": "Family",
-    "znajomi": "Friends",
-    "pikantne": "Spicy",
-    "szalone": "Wild",
-    "glebokie": "Deep"
+    "chill": "Chill",
+    "family": "Family",
+    "friends": "Friends",
+    "spicy": "Spicy",
+    "wild": "Wild",
+    "deep": "Deep"
   }
 }

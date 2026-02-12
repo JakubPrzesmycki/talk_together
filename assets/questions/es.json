@@ -1,0 +1,106 @@
+{
+  "categories": {
+    "chill": [
+      {
+        "text": "¿Película en casa o ir al cine?",
+        "option1": "Película en casa",
+        "option2": "Ir al cine"
+      },
+      {
+        "text": "¿Mar o montaña?",
+        "option1": "Mar",
+        "option2": "Montaña"
+      },
+      {
+        "text": "¿Pizza o hamburguesa?",
+        "option1": "Pizza",
+        "option2": "Hamburguesa"
+      }
+    ],
+    "family": [
+      {
+        "text": "¿Juego de mesa o de cartas?",
+        "option1": "Juego de mesa",
+        "option2": "Juego de cartas"
+      },
+      {
+        "text": "¿Cocinar juntos o pedir comida?",
+        "option1": "Cocinar juntos",
+        "option2": "Pedir comida"
+      },
+      {
+        "text": "¿Paseo en bicicleta o caminata?",
+        "option1": "Bicicleta",
+        "option2": "Caminata"
+      }
+    ],
+    "friends": [
+      {
+        "text": "¿Fiesta en casa o en un club?",
+        "option1": "En casa",
+        "option2": "En un club"
+      },
+      {
+        "text": "¿Karaoke o quiz?",
+        "option1": "Karaoke",
+        "option2": "Quiz"
+      },
+      {
+        "text": "¿Barbacoa o restaurante?",
+        "option1": "Barbacoa",
+        "option2": "Restaurante"
+      }
+    ],
+    "spicy": [
+      {
+        "text": "¿Cita a ciegas o speed dating?",
+        "option1": "Cita a ciegas",
+        "option2": "Speed dating"
+      },
+      {
+        "text": "¿Beso o abrazo?",
+        "option1": "Beso",
+        "option2": "Abrazo"
+      },
+      {
+        "text": "¿Noche romántica o aventura espontánea?",
+        "option1": "Noche romántica",
+        "option2": "Aventura espontánea"
+      }
+    ],
+    "wild": [
+      {
+        "text": "¿Puenting o salto en paracaídas?",
+        "option1": "Puenting",
+        "option2": "Paracaídas"
+      },
+      {
+        "text": "¿Tatuaje o piercing?",
+        "option1": "Tatuaje",
+        "option2": "Piercing"
+      },
+      {
+        "text": "¿Viaje haciendo autostop o backpacking?",
+        "option1": "Autostop",
+        "option2": "Backpacking"
+      }
+    ],
+    "deep": [
+      {
+        "text": "¿Felicidad o éxito?",
+        "option1": "Felicidad",
+        "option2": "Éxito"
+      },
+      {
+        "text": "¿Pasado o futuro?",
+        "option1": "Pasado",
+        "option2": "Futuro"
+      },
+      {
+        "text": "¿Sabiduría o riqueza?",
+        "option1": "Sabiduría",
+        "option2": "Riqueza"
+      }
+    ]
+  }
+}

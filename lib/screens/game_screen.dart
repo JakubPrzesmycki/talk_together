@@ -37,7 +37,9 @@ class GameScreen extends StatefulWidget {
 
 class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   late QuestionWithCategory currentQuestionWithCategory;
-  late List<QuestionWithCategory> allQuestions;
+  List<QuestionWithCategory> allQuestions = [];
+  bool _isLoadingQuestions = true;
+  bool _didStartInit = false;
   final List<RoundResult> sessionRounds = [];
   int votesOption1 = 0;
   int votesOption2 = 0;
@@ -127,22 +129,69 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       ),
     );
     
-    _prepareQuestions();
-    _loadRandomQuestion();
-    remainingSeconds = widget.discussionTime * 60;
-    _questionAnimationController.forward();
-    _buttonsAnimationController.forward();
   }
 
-  void _prepareQuestions() {
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_didStartInit) return;
+    _didStartInit = true;
+    _initializeQuestions();
+  }
+
+  Future<void> _initializeQuestions() async {
+    try {
+      await _prepareQuestions();
+
+      if (!mounted) return;
+      if (allQuestions.isNotEmpty) {
+        _loadRandomQuestion();
+      } else {
+        _setFallbackQuestion();
+      }
+    } catch (_) {
+      if (!mounted) return;
+      _setFallbackQuestion();
+    } finally {
+      if (!mounted) return;
+      setState(() {
+        _isLoadingQuestions = false;
+        remainingSeconds = widget.discussionTime * 60;
+      });
+      _questionAnimationController.forward();
+      _buttonsAnimationController.forward();
+    }
+  }
+
+  Future<void> _prepareQuestions() async {
+    final localeCode = context.locale.languageCode;
     allQuestions = [];
     for (String categoryName in widget.categories) {
-      final questions = QuestionsData.getQuestionsByCategory(categoryName);
+      final questions = await QuestionsData.getQuestionsByCategory(
+        categoryName: categoryName,
+        localeCode: localeCode,
+      );
       final categoryData = widget.categoriesData[categoryName]!;
       for (Question question in questions) {
         allQuestions.add(QuestionWithCategory(question, categoryName, categoryData));
       }
     }
+  }
+
+  void _setFallbackQuestion() {
+    final fallbackCategoryName =
+        widget.categories.isNotEmpty ? widget.categories.first : 'chill';
+    final fallbackCategoryData = widget.categoriesData[fallbackCategoryName] ??
+        CategoryData('💭', const Color(0xFFB8D4FF));
+    currentQuestionWithCategory = QuestionWithCategory(
+      Question(
+        text: 'No questions available',
+        option1: '1',
+        option2: '2',
+      ),
+      fallbackCategoryName,
+      fallbackCategoryData,
+    );
   }
 
   @override
@@ -354,6 +403,19 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     final sectionGap = isCompact ? s.h(18) : s.h(30);
     final timerFontSize = isCompact ? s.sp(40) : s.sp(48);
     final nextButtonVerticalPadding = isCompact ? s.h(12) : s.h(16);
+
+    if (_isLoadingQuestions) {
+      return const Scaffold(
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: Center(
+            child: CircularProgressIndicator(
+              color: Color(0xFFB2E0D8),
+            ),
+          ),
+        ),
+      );
+    }
 
     return PopScope(
       canPop: false,

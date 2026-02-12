@@ -23,12 +23,12 @@ class SessionSummaryScreen extends StatelessWidget {
   });
 
   static const Map<String, String> _categoryTranslationKeys = {
-    'Na luzie': 'categories.na_luzie',
-    'Rodzinne': 'categories.rodzinne',
-    'Znajomi': 'categories.znajomi',
-    'Pikantne': 'categories.pikantne',
-    'Szalone': 'categories.szalone',
-    'Głębokie': 'categories.glebokie',
+    'chill': 'categories.chill',
+    'family': 'categories.family',
+    'friends': 'categories.friends',
+    'spicy': 'categories.spicy',
+    'wild': 'categories.wild',
+    'deep': 'categories.deep',
   };
 
   double get _averageAgreement {

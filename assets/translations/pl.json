@@ -57,11 +57,11 @@
     "most_difference": "Najwięcej różnic było przy pytaniach: {}"
   },
   "categories": {
-    "na_luzie": "Na luzie",
-    "rodzinne": "Rodzinne",
-    "znajomi": "Znajomi",
-    "pikantne": "Pikantne",
-    "szalone": "Szalone",
-    "glebokie": "Głębokie"
+    "chill": "Na luzie",
+    "family": "Rodzinne",
+    "friends": "Znajomi",
+    "spicy": "Pikantne",
+    "wild": "Szalone",
+    "deep": "Głębokie"
   }
 }

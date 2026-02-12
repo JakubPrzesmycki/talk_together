@@ -1,0 +1,106 @@
+{
+  "categories": {
+    "chill": [
+      {
+        "text": "Film à la maison ou sortie au cinéma ?",
+        "option1": "Film à la maison",
+        "option2": "Sortie au cinéma"
+      },
+      {
+        "text": "Mer ou montagne ?",
+        "option1": "Mer",
+        "option2": "Montagne"
+      },
+      {
+        "text": "Pizza ou burger ?",
+        "option1": "Pizza",
+        "option2": "Burger"
+      }
+    ],
+    "family": [
+      {
+        "text": "Jeu de société ou jeu de cartes ?",
+        "option1": "Jeu de société",
+        "option2": "Jeu de cartes"
+      },
+      {
+        "text": "Cuisiner ensemble ou commander à manger ?",
+        "option1": "Cuisiner ensemble",
+        "option2": "Commander à manger"
+      },
+      {
+        "text": "Balade à vélo ou promenade ?",
+        "option1": "Balade à vélo",
+        "option2": "Promenade"
+      }
+    ],
+    "friends": [
+      {
+        "text": "Soirée à la maison ou en boîte ?",
+        "option1": "À la maison",
+        "option2": "En boîte"
+      },
+      {
+        "text": "Karaoké ou quiz ?",
+        "option1": "Karaoké",
+        "option2": "Quiz"
+      },
+      {
+        "text": "Barbecue ou restaurant ?",
+        "option1": "Barbecue",
+        "option2": "Restaurant"
+      }
+    ],
+    "spicy": [
+      {
+        "text": "Rendez-vous à l'aveugle ou speed dating ?",
+        "option1": "Rendez-vous à l'aveugle",
+        "option2": "Speed dating"
+      },
+      {
+        "text": "Baiser ou câlin ?",
+        "option1": "Baiser",
+        "option2": "Câlin"
+      },
+      {
+        "text": "Soirée romantique ou aventure spontanée ?",
+        "option1": "Soirée romantique",
+        "option2": "Aventure spontanée"
+      }
+    ],
+    "wild": [
+      {
+        "text": "Saut à l'élastique ou saut en parachute ?",
+        "option1": "Saut à l'élastique",
+        "option2": "Saut en parachute"
+      },
+      {
+        "text": "Tatouage ou piercing ?",
+        "option1": "Tatouage",
+        "option2": "Piercing"
+      },
+      {
+        "text": "Voyage en auto-stop ou backpacking ?",
+        "option1": "Auto-stop",
+        "option2": "Backpacking"
+      }
+    ],
+    "deep": [
+      {
+        "text": "Bonheur ou réussite ?",
+        "option1": "Bonheur",
+        "option2": "Réussite"
+      },
+      {
+        "text": "Passé ou futur ?",
+        "option1": "Passé",
+        "option2": "Futur"
+      },
+      {
+        "text": "Sagesse ou richesse ?",
+        "option1": "Sagesse",
+        "option2": "Richesse"
+      }
+    ]
+  }
+}

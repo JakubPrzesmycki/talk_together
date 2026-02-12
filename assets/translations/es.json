@@ -57,11 +57,11 @@
     "most_difference": "Más diferencias en la categoría: {}"
   },
   "categories": {
-    "na_luzie": "Relax",
-    "rodzinne": "Familia",
-    "znajomi": "Amigos",
-    "pikantne": "Picante",
-    "szalone": "Locas",
-    "glebokie": "Profundas"
+    "chill": "Relax",
+    "family": "Familia",
+    "friends": "Amigos",
+    "spicy": "Picante",
+    "wild": "Locas",
+    "deep": "Profundas"
   }
 }

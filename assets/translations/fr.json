@@ -57,11 +57,11 @@
     "most_difference": "Le plus de différences dans la catégorie : {}"
   },
   "categories": {
-    "na_luzie": "Détente",
-    "rodzinne": "Famille",
-    "znajomi": "Amis",
-    "pikantne": "Épicé",
-    "szalone": "Folie",
-    "glebokie": "Profondes"
+    "chill": "Détente",
+    "family": "Famille",
+    "friends": "Amis",
+    "spicy": "Épicé",
+    "wild": "Folie",
+    "deep": "Profondes"
   }
 }
