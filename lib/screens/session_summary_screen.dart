@@ -164,212 +164,225 @@ class SessionSummaryScreen extends StatelessWidget {
         child: SafeArea(
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: s.w(24)),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                SizedBox(height: s.h(16)),
-                Row(
-                  children: [
-                    IconButton(
-                      onPressed: () => _goHome(context),
-                      icon: Icon(
-                        Icons.close,
-                        color: Colors.grey[700],
-                        size: s.r(28),
+            child: LayoutBuilder(
+              builder: (context, constraints) => Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(
+                    child: SingleChildScrollView(
+                      physics: const ClampingScrollPhysics(),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                      SizedBox(height: s.h(16)),
+                      Row(
+                        children: [
+                          IconButton(
+                            onPressed: () => _goHome(context),
+                            icon: Icon(
+                              Icons.close,
+                              color: Colors.grey[700],
+                              size: s.r(28),
+                            ),
+                            padding: EdgeInsets.zero,
+                          ),
+                        ],
                       ),
-                      padding: EdgeInsets.zero,
-                    ),
-                  ],
-                ),
-                SizedBox(height: s.h(24)),
-                Text(
-                  'summary.title'.tr(),
-                  style: TextStyle(
-                    fontSize: s.sp(28),
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey[800],
-                  ),
-                ),
-                SizedBox(height: s.h(32)),
-                Container(
-                  padding: EdgeInsets.all(s.r(24)),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(s.r(20)),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.15),
-                        blurRadius: s.r(20),
-                        offset: Offset(0, s.h(6)),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
+                      SizedBox(height: s.h(24)),
                       Text(
-                        'summary.group_agreement'.tr(),
+                        'summary.title'.tr(),
                         style: TextStyle(
-                          fontSize: s.sp(16),
-                          fontWeight: FontWeight.w600,
-                          color: Colors.grey[700],
+                          fontSize: s.sp(28),
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey[800],
                         ),
                       ),
-                      SizedBox(height: s.h(12)),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(s.r(12)),
-                              child: LinearProgressIndicator(
-                                value: hasVotes ? (avg / 100).clamp(0.0, 1.0) : 0,
-                                minHeight: s.h(12),
-                                backgroundColor: Colors.grey[200],
-                                valueColor: const AlwaysStoppedAnimation<Color>(
-                                  Color(0xFFB2E0D8),
+                      SizedBox(height: s.h(32)),
+                      Container(
+                        padding: EdgeInsets.all(s.r(24)),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(s.r(20)),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.15),
+                              blurRadius: s.r(20),
+                              offset: Offset(0, s.h(6)),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'summary.group_agreement'.tr(),
+                              style: TextStyle(
+                                fontSize: s.sp(16),
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey[700],
+                              ),
+                            ),
+                            SizedBox(height: s.h(12)),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(s.r(12)),
+                                    child: LinearProgressIndicator(
+                                      value: hasVotes ? (avg / 100).clamp(0.0, 1.0) : 0,
+                                      minHeight: s.h(12),
+                                      backgroundColor: Colors.grey[200],
+                                      valueColor: const AlwaysStoppedAnimation<Color>(
+                                        Color(0xFFB2E0D8),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: s.w(16)),
+                                Text(
+                                  hasVotes ? '${avg.round()}%' : '—',
+                                  style: TextStyle(
+                                    fontSize: s.sp(24),
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey[800],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            if (!hasVotes) ...[
+                              SizedBox(height: s.h(10)),
+                              Text(
+                                'summary.no_votes_hint'.tr(),
+                                style: TextStyle(
+                                  fontSize: s.sp(13),
+                                  color: Colors.grey[600],
                                 ),
                               ),
-                            ),
-                          ),
-                          SizedBox(width: s.w(16)),
-                          Text(
-                            hasVotes ? '${avg.round()}%' : '—',
-                            style: TextStyle(
-                              fontSize: s.sp(24),
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey[800],
-                            ),
-                          ),
-                        ],
-                      ),
-                      if (!hasVotes) ...[
-                        SizedBox(height: s.h(10)),
-                        Text(
-                          'summary.no_votes_hint'.tr(),
-                          style: TextStyle(
-                            fontSize: s.sp(13),
-                            color: Colors.grey[600],
-                          ),
+                            ],
+                          ],
                         ),
-                      ],
-                    ],
-                  ),
-                ),
-                SizedBox(height: s.h(28)),
-                if (hasVotes) ...[
-                  if (_isExactly(avg, 100))
-                    _buildInfoCard(
-                      context,
-                      'summary.full_agreement'.tr(),
-                      Icons.emoji_events_outlined,
-                    )
-                  else if (_isExactly(avg, 50))
-                    _buildInfoCard(
-                      context,
-                      'summary.split_evenly'.tr(),
-                      Icons.balance,
-                    )
-                  else if (avg >= 45 && avg <= 55)
-                    _buildInfoCard(
-                      context,
-                      'summary.split_nearly'.tr(),
-                      Icons.balance,
-                    )
-                  else if (allSimilar)
-                    _buildInfoCard(
-                      context,
-                      'summary.all_categories_similar'.tr(),
-                      Icons.extension,
-                    )
-                  else ...[
-                    if (mostAgreement != null)
-                      _buildInfoCard(
-                        context,
-                        'summary.most_agreement'.tr(
-                          args: [_translateCategory(mostAgreement)],
-                        ),
-                        Icons.thumb_up_outlined,
                       ),
-                    if (mostAgreement != null && mostDifference != null)
-                      SizedBox(height: s.h(12)),
-                    if (mostDifference != null)
-                      _buildInfoCard(
-                        context,
-                        'summary.most_difference'.tr(
-                          args: [_translateCategory(mostDifference)],
-                        ),
-                        Icons.forum_outlined,
-                      ),
-                  ],
-                  SizedBox(height: s.h(12)),
-                  if (topExtendedCategory != null)
-                    _buildInfoCard(
-                      context,
-                      'summary.extended_top'.tr(
-                        args: [
-                          _translateCategory(topExtendedCategory.key),
-                          '${topExtendedCategory.value}',
-                        ],
-                      ),
-                      Icons.schedule,
-                    ),
-                  if (topExtendedCategory != null) SizedBox(height: s.h(12)),
-                  _buildInfoCard(
-                    context,
-                    'summary.talk_time_stats'.tr(
-                      args: [
-                        _formatDuration(avgDiscussion),
-                        _formatDuration(longestDiscussion),
-                      ],
-                    ),
-                    Icons.timelapse,
-                  ),
-                  SizedBox(height: s.h(12)),
-                  _buildInfoCard(
-                    context,
-                    fullAgreementCount == 0
-                        ? 'summary.full_agreement_none'.tr()
-                        : fullAgreementCount == 1
-                            ? 'summary.full_agreement_count_one'.tr(
-                                args: ['$fullAgreementCount'],
-                              )
-                            : 'summary.full_agreement_count_other'.tr(
-                                args: ['$fullAgreementCount'],
+                      SizedBox(height: s.h(28)),
+                      if (hasVotes) ...[
+                        if (_isExactly(avg, 100))
+                          _buildInfoCard(
+                            context,
+                            'summary.full_agreement'.tr(),
+                            Icons.emoji_events_outlined,
+                          )
+                        else if (_isExactly(avg, 50))
+                          _buildInfoCard(
+                            context,
+                            'summary.split_evenly'.tr(),
+                            Icons.balance,
+                          )
+                        else if (avg >= 45 && avg <= 55)
+                          _buildInfoCard(
+                            context,
+                            'summary.split_nearly'.tr(),
+                            Icons.balance,
+                          )
+                        else if (allSimilar)
+                          _buildInfoCard(
+                            context,
+                            'summary.all_categories_similar'.tr(),
+                            Icons.extension,
+                          )
+                        else ...[
+                          if (mostAgreement != null)
+                            _buildInfoCard(
+                              context,
+                              'summary.most_agreement'.tr(
+                                args: [_translateCategory(mostAgreement)],
                               ),
-                    Icons.emoji_events_outlined,
-                  ),
-                ] else
-                  _buildInfoCard(
-                    context,
-                    'summary.no_votes_card'.tr(),
-                    Icons.auto_awesome_outlined,
-                  ),
-                const Spacer(),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () => _playAgain(context),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFB2E0D8),
-                      padding: EdgeInsets.symmetric(vertical: s.h(18)),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(s.r(30)),
+                              Icons.thumb_up_outlined,
+                            ),
+                          if (mostAgreement != null && mostDifference != null)
+                            SizedBox(height: s.h(12)),
+                          if (mostDifference != null)
+                            _buildInfoCard(
+                              context,
+                              'summary.most_difference'.tr(
+                                args: [_translateCategory(mostDifference)],
+                              ),
+                              Icons.forum_outlined,
+                            ),
+                        ],
+                        SizedBox(height: s.h(12)),
+                        if (topExtendedCategory != null)
+                          _buildInfoCard(
+                            context,
+                            'summary.extended_top'.tr(
+                              args: [
+                                _translateCategory(topExtendedCategory.key),
+                                '${topExtendedCategory.value}',
+                              ],
+                            ),
+                            Icons.schedule,
+                          ),
+                        if (topExtendedCategory != null) SizedBox(height: s.h(12)),
+                        _buildInfoCard(
+                          context,
+                          'summary.talk_time_stats'.tr(
+                            args: [
+                              _formatDuration(avgDiscussion),
+                              _formatDuration(longestDiscussion),
+                            ],
+                          ),
+                          Icons.timelapse,
+                        ),
+                        SizedBox(height: s.h(12)),
+                        _buildInfoCard(
+                          context,
+                          fullAgreementCount == 0
+                              ? 'summary.full_agreement_none'.tr()
+                              : fullAgreementCount == 1
+                                  ? 'summary.full_agreement_count_one'.tr(
+                                      args: ['$fullAgreementCount'],
+                                    )
+                                  : 'summary.full_agreement_count_other'.tr(
+                                      args: ['$fullAgreementCount'],
+                                    ),
+                          Icons.emoji_events_outlined,
+                        ),
+                      ] else
+                        _buildInfoCard(
+                          context,
+                          'summary.no_votes_card'.tr(),
+                          Icons.auto_awesome_outlined,
+                        ),
+                          SizedBox(height: s.h(20)),
+                        ],
                       ),
-                      elevation: 4,
                     ),
-                    child: Text(
-                      'buttons.play_again'.tr(),
-                      style: TextStyle(
-                        fontSize: s.sp(18),
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey[800],
+                  ),
+                  SizedBox(height: s.h(12)),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () => _playAgain(context),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFB2E0D8),
+                        padding: EdgeInsets.symmetric(vertical: s.h(18)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(s.r(30)),
+                        ),
+                        elevation: 4,
+                      ),
+                      child: Text(
+                        'buttons.play_again'.tr(),
+                        style: TextStyle(
+                          fontSize: s.sp(18),
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey[800],
+                        ),
                       ),
                     ),
                   ),
-                ),
-                SizedBox(height: s.h(24)),
-              ],
+                  SizedBox(height: s.h(24)),
+                ],
+              ),
             ),
           ),
         ),

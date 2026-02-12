@@ -62,12 +62,14 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   late AnimationController _timerAnimationController;
   late AnimationController _questionAnimationController;
   late AnimationController _buttonsAnimationController;
+  late AnimationController _tickAnimationController;
   late Animation<double> _resultsOpacityAnimation;
   late Animation<Offset> _timerSlideAnimation;
   late Animation<double> _timerOpacityAnimation;
   late Animation<Offset> _questionSlideAnimation;
   late Animation<double> _questionOpacityAnimation;
   late Animation<double> _buttonsOpacityAnimation;
+  late Animation<double> _tickScaleAnimation;
 
   @override
   void initState() {
@@ -136,6 +138,18 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       CurvedAnimation(
         parent: _buttonsAnimationController,
         curve: Curves.easeOut,
+      ),
+    );
+
+    // Subtle ticking pulse for the last 10 seconds.
+    _tickAnimationController = AnimationController(
+      duration: const Duration(milliseconds: 520),
+      vsync: this,
+    );
+    _tickScaleAnimation = Tween<double>(begin: 1.0, end: 1.05).animate(
+      CurvedAnimation(
+        parent: _tickAnimationController,
+        curve: Curves.easeInOut,
       ),
     );
     
@@ -211,6 +225,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     _timerAnimationController.dispose();
     _questionAnimationController.dispose();
     _buttonsAnimationController.dispose();
+    _tickAnimationController.dispose();
     super.dispose();
   }
 
@@ -239,6 +254,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
           timer?.cancel();
           _resultsAnimationController.reset();
           _timerAnimationController.reset();
+          _syncTickAnimationState();
           // Fade in buttons and question
           _questionAnimationController.forward();
           _buttonsAnimationController.forward();
@@ -260,6 +276,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       timer?.cancel();
       _resultsAnimationController.reset();
       _timerAnimationController.reset();
+      _syncTickAnimationState();
     }
   }
 
@@ -319,6 +336,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
         } else {
           timer.cancel();
         }
+        _syncTickAnimationState();
       });
     });
   }
@@ -344,6 +362,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
           extensionsCount: _currentRoundExtensions,
         );
       }
+      _syncTickAnimationState();
     });
   }
 
@@ -378,9 +397,9 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
               child: Material(
                 color: Colors.transparent,
                 child: ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: s.w(360)),
+                  constraints: BoxConstraints(maxWidth: s.w(392)),
                   child: Container(
-                    margin: EdgeInsets.symmetric(horizontal: s.w(24)),
+                    margin: EdgeInsets.symmetric(horizontal: s.w(18)),
                     padding: EdgeInsets.fromLTRB(
                       s.w(22),
                       s.h(20),
@@ -420,45 +439,57 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                           ),
                         ),
                         SizedBox(height: s.h(18)),
-                        Wrap(
-                          alignment: WrapAlignment.end,
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          spacing: s.w(8),
-                          runSpacing: s.h(8),
+                        Row(
                           children: [
-                            TextButton(
-                              onPressed: () => Navigator.of(context).pop(
-                                TimeUpAction.nextQuestion,
-                              ),
-                              child: Text(
-                                'buttons.next'.tr(),
-                                style: TextStyle(
-                                  fontSize: s.sp(15),
-                                  color: Colors.grey[600],
-                                  fontWeight: FontWeight.w600,
+                            Expanded(
+                              child: TextButton(
+                                onPressed: () => Navigator.of(context).pop(
+                                  TimeUpAction.nextQuestion,
+                                ),
+                                style: TextButton.styleFrom(
+                                  padding: EdgeInsets.symmetric(vertical: s.h(12)),
+                                ),
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: Text(
+                                    'buttons.next_short'.tr(),
+                                    maxLines: 1,
+                                    style: TextStyle(
+                                      fontSize: s.sp(15),
+                                      color: Colors.grey[600],
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
-                            ElevatedButton(
-                              onPressed: () => Navigator.of(context).pop(
-                                TimeUpAction.needMoreTime,
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFFB2E0D8),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(s.r(12)),
+                            SizedBox(width: s.w(8)),
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: () => Navigator.of(context).pop(
+                                  TimeUpAction.needMoreTime,
                                 ),
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: s.w(18),
-                                  vertical: s.h(12),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFFB2E0D8),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(s.r(12)),
+                                  ),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: s.w(12),
+                                    vertical: s.h(12),
+                                  ),
                                 ),
-                              ),
-                              child: Text(
-                                'buttons.need_more_time'.tr(),
-                                style: TextStyle(
-                                  fontSize: s.sp(15),
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey[800],
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: Text(
+                                    'buttons.need_more_time'.tr(),
+                                    maxLines: 1,
+                                    style: TextStyle(
+                                      fontSize: s.sp(15),
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.grey[800],
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
@@ -490,6 +521,27 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     final minutes = seconds ~/ 60;
     final secs = seconds % 60;
     return '${minutes.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}';
+  }
+
+  bool get _shouldShowTickPulse =>
+      votingComplete &&
+      !_isInExtraTime &&
+      remainingSeconds > 0 &&
+      remainingSeconds <= 10;
+
+  void _syncTickAnimationState() {
+    if (_shouldShowTickPulse) {
+      if (!_tickAnimationController.isAnimating) {
+        _tickAnimationController.repeat(reverse: true);
+      }
+      return;
+    }
+    if (_tickAnimationController.isAnimating) {
+      _tickAnimationController.stop();
+    }
+    if (_tickAnimationController.value != 0) {
+      _tickAnimationController.value = 0;
+    }
   }
 
   double _getPercentage(int votes) {
@@ -596,6 +648,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     final sectionGap = isCompact ? s.h(18) : s.h(30);
     final timerFontSize = isCompact ? s.sp(40) : s.sp(48);
     final nextButtonVerticalPadding = isCompact ? s.h(12) : s.h(16);
+    _syncTickAnimationState();
 
     if (_isLoadingQuestions) {
       return const Scaffold(
@@ -766,13 +819,18 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                                           ),
                                         ),
                                         SizedBox(height: isCompact ? s.h(6) : s.h(8)),
-                                        Text(
-                                          _isInExtraTime ? '∞' : _formatTime(remainingSeconds),
-                                          style: TextStyle(
-                                            fontSize: timerFontSize,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.grey[800],
-                                            fontFamily: 'monospace',
+                                        ScaleTransition(
+                                          scale: _shouldShowTickPulse
+                                              ? _tickScaleAnimation
+                                              : const AlwaysStoppedAnimation(1.0),
+                                          child: Text(
+                                            _isInExtraTime ? '∞' : _formatTime(remainingSeconds),
+                                            style: TextStyle(
+                                              fontSize: timerFontSize,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.grey[800],
+                                              fontFamily: 'monospace',
+                                            ),
                                           ),
                                         ),
                                       ],
@@ -933,13 +991,18 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                                 ),
                               ),
                               SizedBox(height: isCompact ? s.h(6) : s.h(8)),
-                              Text(
-                                _isInExtraTime ? '∞' : _formatTime(remainingSeconds),
-                                style: TextStyle(
-                                  fontSize: timerFontSize,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey[800],
-                                  fontFamily: 'monospace',
+                              ScaleTransition(
+                                scale: _shouldShowTickPulse
+                                    ? _tickScaleAnimation
+                                    : const AlwaysStoppedAnimation(1.0),
+                                child: Text(
+                                  _isInExtraTime ? '∞' : _formatTime(remainingSeconds),
+                                  style: TextStyle(
+                                    fontSize: timerFontSize,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey[800],
+                                    fontFamily: 'monospace',
+                                  ),
                                 ),
                               ),
                             ],

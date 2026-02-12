@@ -136,29 +136,19 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
               
               // Categories Grid
               Expanded(
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    return Center(
-                      child: SizedBox(
-                        width: constraints.maxWidth,
-                        child: GridView.count(
-                          crossAxisCount: crossAxisCount,
-                          crossAxisSpacing: s.w(16),
-                          mainAxisSpacing: s.h(16),
-                          childAspectRatio: gridAspectRatio,
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          children: categories.entries.map((entry) {
-                            return _buildCategoryCard(
-                              entry.key,
-                              entry.value.emoji,
-                              entry.value.color,
-                            );
-                          }).toList(),
-                        ),
-                      ),
+                child: GridView.count(
+                  crossAxisCount: crossAxisCount,
+                  crossAxisSpacing: s.w(16),
+                  mainAxisSpacing: s.h(16),
+                  childAspectRatio: gridAspectRatio,
+                  physics: const ClampingScrollPhysics(),
+                  children: categories.entries.map((entry) {
+                    return _buildCategoryCard(
+                      entry.key,
+                      entry.value.emoji,
+                      entry.value.color,
                     );
-                  },
+                  }).toList(),
                 ),
               ),
               

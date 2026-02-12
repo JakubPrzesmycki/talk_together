@@ -9,7 +9,8 @@
     "start_game": "Lancer la partie",
     "play_again": "Rejouer",
     "select_at_least_one_category": "Sélectionnez au moins 1 catégorie",
-    "need_more_time": "Plus de temps"
+    "need_more_time": "Plus de temps",
+    "next_short": "Suivante"
   },
   "language": {
     "select_language": "Choisir la langue",
