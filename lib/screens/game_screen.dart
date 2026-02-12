@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'dart:math';
 import '../models/question.dart';
 import '../models/round_result.dart';
 import '../data/questions_data.dart';
 import 'category_selection_screen.dart';
 import 'session_summary_screen.dart';
+import '../utils/app_scale.dart';
 
 class QuestionWithCategory {
   final Question question;
@@ -131,7 +133,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     _questionAnimationController.forward();
     _buttonsAnimationController.forward();
   }
-  
+
   void _prepareQuestions() {
     allQuestions = [];
     for (String categoryName in widget.categories) {
@@ -155,6 +157,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
 
   void _loadRandomQuestion() {
     final random = Random();
+    if (allQuestions.isEmpty) return;
     
     // Animate old question out, then load new question
     if (votingComplete) {
@@ -267,24 +270,25 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   }
 
   Future<bool> _showExitDialog() async {
+    final s = AppScale.of(context);
     return await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(s.r(20)),
         ),
         title: Text(
-          'Zakończyć grę?',
+          'game.exit_title'.tr(),
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            fontSize: 22,
+            fontSize: s.sp(22),
             color: Colors.grey[800],
           ),
         ),
         content: Text(
-          'Zobaczysz podsumowanie sesji.',
+          'game.exit_message'.tr(),
           style: TextStyle(
-            fontSize: 16,
+            fontSize: s.sp(16),
             color: Colors.grey[600],
           ),
         ),
@@ -292,9 +296,9 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
             child: Text(
-              'Anuluj',
+              'buttons.cancel'.tr(),
               style: TextStyle(
-                fontSize: 16,
+                fontSize: s.sp(16),
                 color: Colors.grey[600],
                 fontWeight: FontWeight.w600,
               ),
@@ -305,14 +309,17 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFFB2E0D8),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(s.r(12)),
               ),
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              padding: EdgeInsets.symmetric(
+                horizontal: s.w(24),
+                vertical: s.h(12),
+              ),
             ),
             child: Text(
-              'Wyjdź',
+              'buttons.exit'.tr(),
               style: TextStyle(
-                fontSize: 16,
+                fontSize: s.sp(16),
                 fontWeight: FontWeight.bold,
                 color: Colors.grey[800],
               ),
@@ -339,6 +346,15 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    final s = AppScale.of(context);
+    final screenHeight = MediaQuery.sizeOf(context).height;
+    final isCompact = screenHeight < 760;
+    final useScrollFallback = screenHeight < 700;
+    final questionFontSize = isCompact ? s.sp(24) : s.sp(28);
+    final sectionGap = isCompact ? s.h(18) : s.h(30);
+    final timerFontSize = isCompact ? s.sp(40) : s.sp(48);
+    final nextButtonVerticalPadding = isCompact ? s.h(12) : s.h(16);
+
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
@@ -363,8 +379,184 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
         ),
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
+            padding: EdgeInsets.all(s.r(24)),
+            child: useScrollFallback
+                ? SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        // Header with back button
+                        Row(
+                          children: [
+                            IconButton(
+                              onPressed: () async {
+                                final shouldExit = await _showExitDialog();
+                                if (shouldExit && mounted) {
+                                  _openSessionSummary();
+                                }
+                              },
+                              icon: Icon(
+                                Icons.arrow_back_ios_new,
+                                color: Colors.grey[700],
+                                size: s.r(24),
+                              ),
+                              padding: EdgeInsets.zero,
+                            ),
+                          ],
+                        ),
+
+                        SizedBox(height: isCompact ? s.h(24) : s.h(40)),
+
+                        // Question with animation
+                        SizedBox(
+                          height: s.h(165),
+                          child: Center(
+                            child: FadeTransition(
+                              opacity: _questionOpacityAnimation,
+                              child: SlideTransition(
+                                position: _questionSlideAnimation,
+                                child: Text(
+                                  currentQuestionWithCategory.question.text,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: questionFontSize,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey[800],
+                                    height: 1.3,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        SizedBox(height: isCompact ? s.h(24) : s.h(40)),
+
+                        // Voting buttons with animation
+                        FadeTransition(
+                          opacity: _buttonsOpacityAnimation,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: _buildVotingButton(
+                                  '1',
+                                  1,
+                                  votesOption1,
+                                  _lightenColor(
+                                    currentQuestionWithCategory.categoryData.color,
+                                    0.1,
+                                  ),
+                                  isCompact,
+                                ),
+                              ),
+                              SizedBox(width: s.w(20)),
+                              Expanded(
+                                child: _buildVotingButton(
+                                  '2',
+                                  2,
+                                  votesOption2,
+                                  _darkenColor(
+                                    currentQuestionWithCategory.categoryData.color,
+                                    0.1,
+                                  ),
+                                  isCompact,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        SizedBox(height: isCompact ? s.h(12) : s.h(20)),
+
+                        // Vote counter
+                        Text(
+                          'game.votes'.tr(args: [
+                            '${votesOption1 + votesOption2}',
+                            '${widget.numberOfPlayers}',
+                          ]),
+                          style: TextStyle(
+                            fontSize: s.sp(16),
+                            color: Colors.grey[600],
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+
+                        SizedBox(height: sectionGap),
+
+                        // Timer (pokazuje się po zakończeniu głosowania)
+                        if (votingComplete) ...[
+                          FadeTransition(
+                            opacity: _timerOpacityAnimation,
+                            child: SlideTransition(
+                              position: _timerSlideAnimation,
+                              child: Column(
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.all(isCompact ? s.r(16) : s.r(20)),
+                                    decoration: BoxDecoration(
+                                      color: remainingSeconds > 0
+                                          ? Colors.grey[100]
+                                          : const Color(0xFFFFB8C6).withOpacity(0.3),
+                                      borderRadius: BorderRadius.circular(s.r(20)),
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          remainingSeconds > 0
+                                              ? 'game.discussion_time'.tr()
+                                              : 'game.time_up'.tr(),
+                                          style: TextStyle(
+                                            fontSize: s.sp(16),
+                                            color: Colors.grey[700],
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        SizedBox(height: isCompact ? s.h(6) : s.h(8)),
+                                        Text(
+                                          _formatTime(remainingSeconds),
+                                          style: TextStyle(
+                                            fontSize: timerFontSize,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.grey[800],
+                                            fontFamily: 'monospace',
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(height: isCompact ? s.h(14) : s.h(20)),
+                                  ElevatedButton(
+                                    onPressed: _loadRandomQuestion,
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor:
+                                          currentQuestionWithCategory.categoryData.color,
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: s.w(40),
+                                        vertical: nextButtonVerticalPadding,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(s.r(30)),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      'buttons.next'.tr(),
+                                      style: TextStyle(
+                                        fontSize: s.sp(18),
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.grey[800],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+
+                        SizedBox(height: isCompact ? s.h(12) : s.h(20)),
+                      ],
+                    ),
+                  )
+                : Column(
               children: [
                 // Header with back button
                 Row(
@@ -379,14 +571,14 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                       icon: Icon(
                         Icons.arrow_back_ios_new,
                         color: Colors.grey[700],
-                        size: 24,
+                        size: s.r(24),
                       ),
                       padding: EdgeInsets.zero,
                     ),
                   ],
                 ),
 
-                const SizedBox(height: 40),
+                SizedBox(height: isCompact ? s.h(24) : s.h(40)),
 
               // Question with animation
               Expanded(
@@ -399,7 +591,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                         currentQuestionWithCategory.question.text,
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontSize: 28,
+                          fontSize: questionFontSize,
                           fontWeight: FontWeight.bold,
                           color: Colors.grey[800],
                           height: 1.3,
@@ -410,7 +602,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                 ),
               ),
 
-              const SizedBox(height: 40),
+              SizedBox(height: isCompact ? s.h(24) : s.h(40)),
 
               // Voting buttons with animation
               FadeTransition(
@@ -423,34 +615,39 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                         1,
                         votesOption1,
                         _lightenColor(currentQuestionWithCategory.categoryData.color, 0.1),
+                        isCompact,
                       ),
                     ),
-                    const SizedBox(width: 20),
+                    SizedBox(width: s.w(20)),
                     Expanded(
                       child: _buildVotingButton(
                         '2',
                         2,
                         votesOption2,
                         _darkenColor(currentQuestionWithCategory.categoryData.color, 0.1),
+                        isCompact,
                       ),
                     ),
                   ],
                 ),
               ),
 
-              const SizedBox(height: 20),
+              SizedBox(height: isCompact ? s.h(12) : s.h(20)),
 
               // Vote counter
               Text(
-                'Głosów: ${votesOption1 + votesOption2}/${widget.numberOfPlayers}',
+                'game.votes'.tr(args: [
+                  '${votesOption1 + votesOption2}',
+                  '${widget.numberOfPlayers}',
+                ]),
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: s.sp(16),
                   color: Colors.grey[600],
                   fontWeight: FontWeight.w600,
                 ),
               ),
 
-              const SizedBox(height: 30),
+              SizedBox(height: sectionGap),
 
               // Timer (pokazuje się po zakończeniu głosowania)
               if (votingComplete) ...[
@@ -461,28 +658,30 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                     child: Column(
                       children: [
                         Container(
-                          padding: const EdgeInsets.all(20),
+                          padding: EdgeInsets.all(isCompact ? s.r(16) : s.r(20)),
                           decoration: BoxDecoration(
                             color: remainingSeconds > 0 
                                 ? Colors.grey[100] 
                                 : const Color(0xFFFFB8C6).withOpacity(0.3),
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(s.r(20)),
                           ),
                           child: Column(
                             children: [
                               Text(
-                                remainingSeconds > 0 ? 'Czas na rozmowę' : 'Czas minął!',
+                                remainingSeconds > 0
+                                    ? 'game.discussion_time'.tr()
+                                    : 'game.time_up'.tr(),
                                 style: TextStyle(
-                                  fontSize: 16,
+                                  fontSize: s.sp(16),
                                   color: Colors.grey[700],
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
-                              const SizedBox(height: 8),
+                              SizedBox(height: isCompact ? s.h(6) : s.h(8)),
                               Text(
                                 _formatTime(remainingSeconds),
                                 style: TextStyle(
-                                  fontSize: 48,
+                                  fontSize: timerFontSize,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.grey[800],
                                   fontFamily: 'monospace',
@@ -491,20 +690,23 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                             ],
                           ),
                         ),
-                        const SizedBox(height: 20),
+                        SizedBox(height: isCompact ? s.h(14) : s.h(20)),
                         ElevatedButton(
                           onPressed: _loadRandomQuestion,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: currentQuestionWithCategory.categoryData.color,
-                            padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: s.w(40),
+                              vertical: nextButtonVerticalPadding,
+                            ),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
+                              borderRadius: BorderRadius.circular(s.r(30)),
                             ),
                           ),
                           child: Text(
-                            'Następne pytanie',
+                            'buttons.next'.tr(),
                             style: TextStyle(
-                              fontSize: 18,
+                              fontSize: s.sp(18),
                               fontWeight: FontWeight.bold,
                               color: Colors.grey[800],
                             ),
@@ -516,7 +718,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                 ),
               ],
 
-              const SizedBox(height: 20),
+              SizedBox(height: isCompact ? s.h(12) : s.h(20)),
               ],
             ),
           ),
@@ -526,22 +728,29 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildVotingButton(String label, int option, int votes, Color color) {
+  Widget _buildVotingButton(
+    String label,
+    int option,
+    int votes,
+    Color color,
+    bool isCompact,
+  ) {
+    final s = AppScale.of(context);
     final percentage = _getPercentage(votes);
     final isVotingComplete = votingComplete;
 
     return GestureDetector(
       onTap: () => _vote(option),
       child: Container(
-        height: 140,
+        height: isCompact ? s.h(122) : s.h(140),
         decoration: BoxDecoration(
           color: isVotingComplete ? color.withOpacity(0.6) : color,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(s.r(20)),
           boxShadow: [
             BoxShadow(
               color: color.withOpacity(0.3),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
+              blurRadius: s.r(10),
+              offset: Offset(0, s.h(4)),
             ),
           ],
         ),
@@ -551,7 +760,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
             Text(
               label,
               style: TextStyle(
-                fontSize: 48,
+                fontSize: isCompact ? s.sp(42) : s.sp(48),
                 fontWeight: FontWeight.bold,
                 color: Colors.grey[800],
               ),
@@ -561,19 +770,21 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                 opacity: _resultsOpacityAnimation,
                 child: Column(
                   children: [
-                    const SizedBox(height: 8),
+                    SizedBox(height: isCompact ? s.h(4) : s.h(8)),
                     Text(
                       '${percentage.toStringAsFixed(0)}%',
                       style: TextStyle(
-                        fontSize: 24,
+                        fontSize: isCompact ? s.sp(20) : s.sp(24),
                         fontWeight: FontWeight.bold,
                         color: Colors.grey[800],
                       ),
                     ),
                     Text(
-                      '$votes ${votes == 1 ? 'głos' : 'głosy'}',
+                      votes == 1
+                          ? 'game.vote_singular'.tr(args: ['$votes'])
+                          : 'game.vote_plural'.tr(args: ['$votes']),
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: isCompact ? s.sp(11) : s.sp(14),
                         color: Colors.grey[700],
                       ),
                     ),

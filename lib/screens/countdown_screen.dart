@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'game_screen.dart';
 import 'category_selection_screen.dart';
+import '../utils/app_scale.dart';
 
 class CountdownScreen extends StatefulWidget {
   final List<String> categories;
@@ -120,6 +122,7 @@ class _CountdownScreenState extends State<CountdownScreen>
 
   @override
   Widget build(BuildContext context) {
+    final s = AppScale.of(context);
     return Scaffold(
       backgroundColor: Colors.white,
       body: Container(
@@ -145,24 +148,24 @@ class _CountdownScreenState extends State<CountdownScreen>
             children: [
               // Emoji in top center
               Positioned(
-                top: isSingleCategory ? 60 : 100,
+                top: isSingleCategory ? s.h(60) : s.h(100),
                 left: 0,
                 right: 0,
                 child: Center(
                   child: isSingleCategory
                       ? Text(
                           singleCategoryData.emoji,
-                          style: const TextStyle(fontSize: 80),
+                          style: TextStyle(fontSize: s.sp(80)),
                         )
                       : Image.asset(
                           'assets/images/question_mark_icon.png',
-                          width: 100,
-                          height: 100,
+                          width: s.w(100),
+                          height: s.w(100),
                           errorBuilder: (context, error, stackTrace) {
                             // Fallback if icon not found
                             return Text(
-                              '❔',
-                              style: const TextStyle(fontSize: 80),
+                              'countdown.fallback_icon'.tr(),
+                              style: TextStyle(fontSize: s.sp(80)),
                             );
                           },
                         ),
@@ -176,12 +179,12 @@ class _CountdownScreenState extends State<CountdownScreen>
                   child: Text(
                     _getCountdownText(),
                     style: TextStyle(
-                      fontSize: 180,
+                      fontSize: s.sp(180),
                       fontWeight: FontWeight.bold,
                       color: isSingleCategory
                           ? singleCategoryData.color.withOpacity(0.9)
                           : Colors.grey[700],
-                      letterSpacing: 2,
+                      letterSpacing: s.r(2),
                       height: 1,
                     ),
                   ),

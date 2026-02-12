@@ -1,9 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'screens/start_screen.dart';
 
-void main() {
-  runApp(const TalkTogetherApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
+
+  runApp(
+    EasyLocalization(
+      supportedLocales: const [
+        Locale('en'),
+        Locale('pl'),
+        Locale('es'),
+        Locale('fr'),
+      ],
+      path: 'assets/translations',
+      fallbackLocale: const Locale('en'),
+      child: const TalkTogetherApp(),
+    ),
+  );
 }
 
 class TalkTogetherApp extends StatelessWidget {
@@ -12,8 +28,11 @@ class TalkTogetherApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'TalkTogether',
+      onGenerateTitle: (_) => 'game_title'.tr(),
       debugShowCheckedModeBanner: false,
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFFB2E0D8),
