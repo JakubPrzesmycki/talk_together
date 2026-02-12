@@ -8,7 +8,8 @@
     "start": "START",
     "start_game": "Start gry",
     "play_again": "Zagraj ponownie",
-    "select_at_least_one_category": "Wybierz co najmniej 1 kategorię"
+    "select_at_least_one_category": "Wybierz co najmniej 1 kategorię",
+    "need_more_time": "Więcej czasu"
   },
   "language": {
     "select_language": "Wybierz język",
@@ -42,7 +43,10 @@
     "discussion_time": "Czas na rozmowę",
     "time_up": "Czas minął!",
     "exit_title": "Zakończyć grę?",
-    "exit_message": "Zobaczysz podsumowanie sesji."
+    "exit_message": "Zobaczysz podsumowanie sesji.",
+    "extend_title": "Kontynuować rozmowę?",
+    "extend_message": "Czas minął. Czy potrzebujecie więcej czasu na tę rozmowę?",
+    "extra_time": "Dodatkowy czas"
   },
   "summary": {
     "title": "Podsumowanie sesji",
@@ -54,7 +58,14 @@
     "full_agreement": "Pełna zgodność! W tej sesji byliście wyjątkowo jednomyślni.",
     "all_categories_similar": "We wszystkich kategoriach mieliście podobny poziom zgodności.",
     "most_agreement": "Najwięcej zgodności mieliście w kategorii: {}",
-    "most_difference": "Najwięcej różnic było przy pytaniach: {}"
+    "most_difference": "Najwięcej różnic było przy pytaniach: {}",
+    "extended_single": "Przedłużaliście rozmowę w kategorii: {}",
+    "extended_multiple": "Przedłużaliście rozmowy w kategoriach: {}",
+    "extended_top": "Najczęściej przedłużana kategoria: {} ({}x)",
+    "talk_time_stats": "Średni czas rozmowy: {}  |  Najdłuższa: {}",
+    "full_agreement_count_one": "{} pytanie zakończyło się pełną zgodą.",
+    "full_agreement_count_other": "{} pytań zakończyło się pełną zgodą.",
+    "full_agreement_none": "W tej sesji nie było pytań z pełną zgodą."
   },
   "categories": {
     "chill": "Na luzie",

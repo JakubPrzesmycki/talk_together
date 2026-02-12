@@ -8,7 +8,8 @@
     "start": "DÉMARRER",
     "start_game": "Lancer la partie",
     "play_again": "Rejouer",
-    "select_at_least_one_category": "Sélectionnez au moins 1 catégorie"
+    "select_at_least_one_category": "Sélectionnez au moins 1 catégorie",
+    "need_more_time": "Plus de temps"
   },
   "language": {
     "select_language": "Choisir la langue",
@@ -42,7 +43,10 @@
     "discussion_time": "Temps de discussion",
     "time_up": "Temps écoulé !",
     "exit_title": "Quitter la partie ?",
-    "exit_message": "Vous verrez le résumé de la session."
+    "exit_message": "Vous verrez le résumé de la session.",
+    "extend_title": "Continuer la discussion ?",
+    "extend_message": "Le temps est écoulé. Avez-vous besoin de plus de temps pour cette discussion ?",
+    "extra_time": "Temps supplémentaire"
   },
   "summary": {
     "title": "Résumé de session",
@@ -54,7 +58,14 @@
     "full_agreement": "Accord total ! Vous avez été particulièrement unanimes.",
     "all_categories_similar": "Dans toutes les catégories, votre niveau d'accord était similaire.",
     "most_agreement": "Le plus d'accord dans la catégorie : {}",
-    "most_difference": "Le plus de différences dans la catégorie : {}"
+    "most_difference": "Le plus de différences dans la catégorie : {}",
+    "extended_single": "Vous avez prolongé la discussion dans la catégorie : {}",
+    "extended_multiple": "Vous avez prolongé les discussions dans les catégories : {}",
+    "extended_top": "Catégorie la plus prolongée : {} ({}x)",
+    "talk_time_stats": "Temps moyen de discussion : {}  |  La plus longue : {}",
+    "full_agreement_count_one": "{} question s'est terminée en accord total.",
+    "full_agreement_count_other": "{} questions se sont terminées en accord total.",
+    "full_agreement_none": "Aucune question ne s'est terminée en accord total pendant cette session."
   },
   "categories": {
     "chill": "Détente",

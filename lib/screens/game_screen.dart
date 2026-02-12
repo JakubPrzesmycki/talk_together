@@ -17,6 +17,11 @@ class QuestionWithCategory {
   QuestionWithCategory(this.question, this.categoryName, this.categoryData);
 }
 
+enum TimeUpAction {
+  needMoreTime,
+  nextQuestion,
+}
+
 class GameScreen extends StatefulWidget {
   final List<String> categories;
   final Map<String, CategoryData> categoriesData;
@@ -47,6 +52,11 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   bool timerStarted = false;
   int remainingSeconds = 0;
   Timer? timer;
+  bool _isTimeUpDialogOpen = false;
+  bool _isInExtraTime = false;
+  int? _currentRoundResultIndex;
+  int _currentRoundExtensions = 0;
+  DateTime? _discussionStartedAt;
   
   late AnimationController _resultsAnimationController;
   late AnimationController _timerAnimationController;
@@ -221,6 +231,10 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
             votingComplete = false;
             timerStarted = false;
             remainingSeconds = widget.discussionTime * 60;
+            _isInExtraTime = false;
+            _currentRoundResultIndex = null;
+            _currentRoundExtensions = 0;
+            _discussionStartedAt = null;
           });
           timer?.cancel();
           _resultsAnimationController.reset();
@@ -238,6 +252,10 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
         votingComplete = false;
         timerStarted = false;
         remainingSeconds = widget.discussionTime * 60;
+        _isInExtraTime = false;
+        _currentRoundResultIndex = null;
+        _currentRoundExtensions = 0;
+        _discussionStartedAt = null;
       });
       timer?.cancel();
       _resultsAnimationController.reset();
@@ -261,9 +279,16 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
         final majority = votesOption1 >= votesOption2 ? votesOption1 : votesOption2;
         sessionRounds.add(RoundResult(
           categoryName: currentQuestionWithCategory.categoryName,
+          questionText: currentQuestionWithCategory.question.text,
           totalVotes: total,
           majorityVotes: majority,
+          extensionsCount: 0,
+          discussionDurationSeconds: 0,
         ));
+        _currentRoundResultIndex = sessionRounds.length - 1;
+        _currentRoundExtensions = 0;
+        _isInExtraTime = false;
+        _discussionStartedAt = DateTime.now();
         
         // Start animations with delays
         Future.delayed(const Duration(milliseconds: 400), () {
@@ -285,13 +310,180 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   void _startTimer() {
     timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
-        if (remainingSeconds > 0) {
+        if (remainingSeconds > 1) {
           remainingSeconds--;
+        } else if (remainingSeconds == 1) {
+          remainingSeconds = 0;
+          timer.cancel();
+          _onDiscussionTimeEnded();
         } else {
           timer.cancel();
         }
       });
     });
+  }
+
+  Future<void> _onDiscussionTimeEnded() async {
+    if (!mounted || _isTimeUpDialogOpen) return;
+    _isTimeUpDialogOpen = true;
+    final action = await _showContinueDiscussionDialog();
+    _isTimeUpDialogOpen = false;
+
+    if (!mounted) return;
+    if (action == TimeUpAction.nextQuestion) {
+      _goToNextQuestion();
+      return;
+    }
+
+    setState(() {
+      _isInExtraTime = true;
+      _currentRoundExtensions++;
+      final index = _currentRoundResultIndex;
+      if (index != null && index >= 0 && index < sessionRounds.length) {
+        sessionRounds[index] = sessionRounds[index].copyWith(
+          extensionsCount: _currentRoundExtensions,
+        );
+      }
+    });
+  }
+
+  void _goToNextQuestion() {
+    _finalizeCurrentRoundDuration();
+    _loadRandomQuestion();
+  }
+
+  void _finalizeCurrentRoundDuration() {
+    final index = _currentRoundResultIndex;
+    final startedAt = _discussionStartedAt;
+    if (index == null || startedAt == null) return;
+    if (index < 0 || index >= sessionRounds.length) return;
+
+    final elapsed = DateTime.now().difference(startedAt).inSeconds;
+    sessionRounds[index] = sessionRounds[index].copyWith(
+      discussionDurationSeconds: elapsed < 0 ? 0 : elapsed,
+    );
+    _discussionStartedAt = null;
+  }
+
+  Future<TimeUpAction> _showContinueDiscussionDialog() async {
+    final s = AppScale.of(context);
+    final result = await showGeneralDialog<TimeUpAction>(
+          context: context,
+          barrierDismissible: false,
+          barrierLabel: 'continueDiscussionDialog',
+          barrierColor: Colors.black.withOpacity(0.25),
+          transitionDuration: const Duration(milliseconds: 220),
+          pageBuilder: (_, __, ___) {
+            return Center(
+              child: Material(
+                color: Colors.transparent,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: s.w(360)),
+                  child: Container(
+                    margin: EdgeInsets.symmetric(horizontal: s.w(24)),
+                    padding: EdgeInsets.fromLTRB(
+                      s.w(22),
+                      s.h(20),
+                      s.w(22),
+                      s.h(16),
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(s.r(20)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.08),
+                          blurRadius: s.r(20),
+                          offset: Offset(0, s.h(6)),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'game.extend_title'.tr(),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: s.sp(22),
+                            color: Colors.grey[800],
+                          ),
+                        ),
+                        SizedBox(height: s.h(10)),
+                        Text(
+                          'game.extend_message'.tr(),
+                          style: TextStyle(
+                            fontSize: s.sp(16),
+                            color: Colors.grey[600],
+                            height: 1.35,
+                          ),
+                        ),
+                        SizedBox(height: s.h(18)),
+                        Wrap(
+                          alignment: WrapAlignment.end,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          spacing: s.w(8),
+                          runSpacing: s.h(8),
+                          children: [
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(
+                                TimeUpAction.nextQuestion,
+                              ),
+                              child: Text(
+                                'buttons.next'.tr(),
+                                style: TextStyle(
+                                  fontSize: s.sp(15),
+                                  color: Colors.grey[600],
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                            ElevatedButton(
+                              onPressed: () => Navigator.of(context).pop(
+                                TimeUpAction.needMoreTime,
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFFB2E0D8),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(s.r(12)),
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: s.w(18),
+                                  vertical: s.h(12),
+                                ),
+                              ),
+                              child: Text(
+                                'buttons.need_more_time'.tr(),
+                                style: TextStyle(
+                                  fontSize: s.sp(15),
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey[800],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+          transitionBuilder: (context, animation, secondaryAnimation, child) {
+            final curve = CurvedAnimation(parent: animation, curve: Curves.easeOutCubic);
+            return FadeTransition(
+              opacity: curve,
+              child: ScaleTransition(
+                scale: Tween<double>(begin: 0.96, end: 1.0).animate(curve),
+                child: child,
+              ),
+            );
+          },
+        );
+
+    return result ?? TimeUpAction.nextQuestion;
   }
 
   String _formatTime(int seconds) {
@@ -380,6 +572,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   }
 
   void _openSessionSummary() {
+    _finalizeCurrentRoundDuration();
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
         builder: (context) => SessionSummaryScreen(
@@ -555,17 +748,17 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                                   Container(
                                     padding: EdgeInsets.all(isCompact ? s.r(16) : s.r(20)),
                                     decoration: BoxDecoration(
-                                      color: remainingSeconds > 0
-                                          ? Colors.grey[100]
-                                          : const Color(0xFFFFB8C6).withOpacity(0.3),
+                                      color: Colors.grey[100],
                                       borderRadius: BorderRadius.circular(s.r(20)),
                                     ),
                                     child: Column(
                                       children: [
                                         Text(
-                                          remainingSeconds > 0
-                                              ? 'game.discussion_time'.tr()
-                                              : 'game.time_up'.tr(),
+                                          _isInExtraTime
+                                              ? 'game.extra_time'.tr()
+                                              : remainingSeconds > 0
+                                                  ? 'game.discussion_time'.tr()
+                                                  : 'game.time_up'.tr(),
                                           style: TextStyle(
                                             fontSize: s.sp(16),
                                             color: Colors.grey[700],
@@ -574,7 +767,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                                         ),
                                         SizedBox(height: isCompact ? s.h(6) : s.h(8)),
                                         Text(
-                                          _formatTime(remainingSeconds),
+                                          _isInExtraTime ? '∞' : _formatTime(remainingSeconds),
                                           style: TextStyle(
                                             fontSize: timerFontSize,
                                             fontWeight: FontWeight.bold,
@@ -587,7 +780,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                                   ),
                                   SizedBox(height: isCompact ? s.h(14) : s.h(20)),
                                   ElevatedButton(
-                                    onPressed: _loadRandomQuestion,
+                                    onPressed: _goToNextQuestion,
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor:
                                           currentQuestionWithCategory.categoryData.color,
@@ -722,17 +915,17 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                         Container(
                           padding: EdgeInsets.all(isCompact ? s.r(16) : s.r(20)),
                           decoration: BoxDecoration(
-                            color: remainingSeconds > 0 
-                                ? Colors.grey[100] 
-                                : const Color(0xFFFFB8C6).withOpacity(0.3),
+                            color: Colors.grey[100],
                             borderRadius: BorderRadius.circular(s.r(20)),
                           ),
                           child: Column(
                             children: [
                               Text(
-                                remainingSeconds > 0
-                                    ? 'game.discussion_time'.tr()
-                                    : 'game.time_up'.tr(),
+                                _isInExtraTime
+                                    ? 'game.extra_time'.tr()
+                                    : remainingSeconds > 0
+                                        ? 'game.discussion_time'.tr()
+                                        : 'game.time_up'.tr(),
                                 style: TextStyle(
                                   fontSize: s.sp(16),
                                   color: Colors.grey[700],
@@ -741,7 +934,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                               ),
                               SizedBox(height: isCompact ? s.h(6) : s.h(8)),
                               Text(
-                                _formatTime(remainingSeconds),
+                                _isInExtraTime ? '∞' : _formatTime(remainingSeconds),
                                 style: TextStyle(
                                   fontSize: timerFontSize,
                                   fontWeight: FontWeight.bold,
@@ -754,7 +947,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                         ),
                         SizedBox(height: isCompact ? s.h(14) : s.h(20)),
                         ElevatedButton(
-                          onPressed: _loadRandomQuestion,
+                          onPressed: _goToNextQuestion,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: currentQuestionWithCategory.categoryData.color,
                             padding: EdgeInsets.symmetric(

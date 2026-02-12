@@ -8,7 +8,8 @@
     "start": "START",
     "start_game": "Start game",
     "play_again": "Play again",
-    "select_at_least_one_category": "Select at least 1 category"
+    "select_at_least_one_category": "Select at least 1 category",
+    "need_more_time": "More time"
   },
   "language": {
     "select_language": "Select language",
@@ -42,7 +43,10 @@
     "discussion_time": "Discussion time",
     "time_up": "Time is up!",
     "exit_title": "Leave game?",
-    "exit_message": "You will see the session summary."
+    "exit_message": "You will see the session summary.",
+    "extend_title": "Continue conversation?",
+    "extend_message": "Time is up. Do you need more time for this conversation?",
+    "extra_time": "Extra time"
   },
   "summary": {
     "title": "Session summary",
@@ -54,7 +58,14 @@
     "full_agreement": "Perfect alignment! You were exceptionally unanimous in this session.",
     "all_categories_similar": "Across all categories, your agreement level was similar.",
     "most_agreement": "Most agreement in category: {}",
-    "most_difference": "Most differences in category: {}"
+    "most_difference": "Most differences in category: {}",
+    "extended_single": "You extended the discussion in category: {}",
+    "extended_multiple": "You extended discussions in categories: {}",
+    "extended_top": "Most extended discussions: {} ({}x)",
+    "talk_time_stats": "Average talk time: {}  |  Longest: {}",
+    "full_agreement_count_one": "{} question ended with full agreement.",
+    "full_agreement_count_other": "{} questions ended with full agreement.",
+    "full_agreement_none": "No questions ended with full agreement in this session."
   },
   "categories": {
     "chill": "Chill",

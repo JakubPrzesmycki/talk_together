@@ -8,7 +8,8 @@
     "start": "INICIAR",
     "start_game": "Empezar juego",
     "play_again": "Jugar de nuevo",
-    "select_at_least_one_category": "Selecciona al menos 1 categoría"
+    "select_at_least_one_category": "Selecciona al menos 1 categoría",
+    "need_more_time": "Más tiempo"
   },
   "language": {
     "select_language": "Seleccionar idioma",
@@ -42,7 +43,10 @@
     "discussion_time": "Tiempo de conversación",
     "time_up": "¡Se acabó el tiempo!",
     "exit_title": "¿Salir del juego?",
-    "exit_message": "Verás el resumen de la sesión."
+    "exit_message": "Verás el resumen de la sesión.",
+    "extend_title": "¿Continuar la conversación?",
+    "extend_message": "Se acabó el tiempo. ¿Necesitan más tiempo para esta conversación?",
+    "extra_time": "Tiempo extra"
   },
   "summary": {
     "title": "Resumen de la sesión",
@@ -54,7 +58,14 @@
     "full_agreement": "¡Acuerdo total! En esta sesión fueron excepcionalmente unánimes.",
     "all_categories_similar": "En todas las categorías tuvieron un nivel de acuerdo similar.",
     "most_agreement": "Más acuerdo en la categoría: {}",
-    "most_difference": "Más diferencias en la categoría: {}"
+    "most_difference": "Más diferencias en la categoría: {}",
+    "extended_single": "Extendieron la conversación en la categoría: {}",
+    "extended_multiple": "Extendieron conversaciones en las categorías: {}",
+    "extended_top": "Categoría más extendida: {} ({}x)",
+    "talk_time_stats": "Tiempo promedio de conversación: {}  |  Más larga: {}",
+    "full_agreement_count_one": "{} pregunta terminó con acuerdo total.",
+    "full_agreement_count_other": "{} preguntas terminaron con acuerdo total.",
+    "full_agreement_none": "En esta sesión no hubo preguntas con acuerdo total."
   },
   "categories": {
     "chill": "Relax",

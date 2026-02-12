@@ -98,14 +98,54 @@ class SessionSummaryScreen extends StatelessWidget {
     return (value - target).abs() < epsilon;
   }
 
+  MapEntry<String, int>? get _topExtendedCategory {
+    final byCategory = <String, int>{};
+    for (final r in roundResults) {
+      if (r.extensionsCount <= 0) continue;
+      byCategory.update(
+        r.categoryName,
+        (value) => value + r.extensionsCount,
+        ifAbsent: () => r.extensionsCount,
+      );
+    }
+    if (byCategory.isEmpty) return null;
+    final entries = byCategory.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+    return entries.first;
+  }
+
+  int get _averageDiscussionSeconds {
+    if (roundResults.isEmpty) return 0;
+    final sum = roundResults.fold<int>(
+      0,
+      (acc, r) => acc + r.discussionDurationSeconds,
+    );
+    return (sum / roundResults.length).round();
+  }
+
+  int get _longestDiscussionSeconds {
+    if (roundResults.isEmpty) return 0;
+    return roundResults
+        .map((r) => r.discussionDurationSeconds)
+        .reduce((a, b) => a > b ? a : b);
+  }
+
+  int get _fullAgreementCount {
+    return roundResults.where((r) => (r.agreementPercent - 100).abs() < 0.01).length;
+  }
+
   @override
   Widget build(BuildContext context) {
     final s = AppScale.of(context);
     final avg = _averageAgreement;
+    final hasVotes = roundResults.isNotEmpty;
     final mostAgreement = _categoryMostAgreement;
     final mostDifference = _categoryMostDifference;
     final allSimilar = _allCategoriesSimilar;
-    final hasVotes = roundResults.isNotEmpty;
+    final topExtendedCategory = _topExtendedCategory;
+    final avgDiscussion = _averageDiscussionSeconds;
+    final longestDiscussion = _longestDiscussionSeconds;
+    final fullAgreementCount = _fullAgreementCount;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -262,6 +302,43 @@ class SessionSummaryScreen extends StatelessWidget {
                         Icons.forum_outlined,
                       ),
                   ],
+                  SizedBox(height: s.h(12)),
+                  if (topExtendedCategory != null)
+                    _buildInfoCard(
+                      context,
+                      'summary.extended_top'.tr(
+                        args: [
+                          _translateCategory(topExtendedCategory.key),
+                          '${topExtendedCategory.value}',
+                        ],
+                      ),
+                      Icons.schedule,
+                    ),
+                  if (topExtendedCategory != null) SizedBox(height: s.h(12)),
+                  _buildInfoCard(
+                    context,
+                    'summary.talk_time_stats'.tr(
+                      args: [
+                        _formatDuration(avgDiscussion),
+                        _formatDuration(longestDiscussion),
+                      ],
+                    ),
+                    Icons.timelapse,
+                  ),
+                  SizedBox(height: s.h(12)),
+                  _buildInfoCard(
+                    context,
+                    fullAgreementCount == 0
+                        ? 'summary.full_agreement_none'.tr()
+                        : fullAgreementCount == 1
+                            ? 'summary.full_agreement_count_one'.tr(
+                                args: ['$fullAgreementCount'],
+                              )
+                            : 'summary.full_agreement_count_other'.tr(
+                                args: ['$fullAgreementCount'],
+                              ),
+                    Icons.emoji_events_outlined,
+                  ),
                 ] else
                   _buildInfoCard(
                     context,
@@ -304,6 +381,12 @@ class SessionSummaryScreen extends StatelessWidget {
     final key = _categoryTranslationKeys[value];
     if (key == null) return value;
     return key.tr();
+  }
+
+  String _formatDuration(int totalSeconds) {
+    final minutes = totalSeconds ~/ 60;
+    final seconds = totalSeconds % 60;
+    return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
   }
 
   Widget _buildInfoCard(BuildContext context, String text, IconData icon) {
