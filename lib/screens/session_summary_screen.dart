@@ -25,7 +25,7 @@ class SessionSummaryScreen extends StatelessWidget {
   static const Map<String, String> _categoryTranslationKeys = {
     'chill': 'categories.chill',
     'family': 'categories.family',
-    'friends': 'categories.friends',
+    'party': 'categories.party',
     'spicy': 'categories.spicy',
     'wild': 'categories.wild',
     'deep': 'categories.deep',

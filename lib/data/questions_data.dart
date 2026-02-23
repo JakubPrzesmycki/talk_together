@@ -10,7 +10,7 @@ class QuestionsData {
   static const Set<String> _categoryIds = {
     'chill',
     'family',
-    'friends',
+    'party',
     'spicy',
     'wild',
     'deep',
