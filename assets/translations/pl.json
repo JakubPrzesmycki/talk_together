@@ -26,7 +26,7 @@
   "game_settings": {
     "title": "Ustawienia gry",
     "how_to_play": "Jak grać?",
-    "how_to_play_desc": "Wyświetli się pytanie z dwiema opcjami. Każdy gracz głosuje, a po zakończeniu głosowania wyświetlają się wyniki i rozpoczyna rozmowa!",
+    "how_to_play_desc": "Odpowiedz na pytanie, wybierz jedną z dwóch opcji i anonimowo zagłosuj. Wyniki to dopiero początek. Najważniejszym elementem jest rozmowa, która zaczyna się później!",
     "players": "Liczba graczy",
     "discussion_time": "Czas rozmowy (minuty)"
   },

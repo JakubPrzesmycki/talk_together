@@ -26,7 +26,7 @@
   "game_settings": {
     "title": "Game settings",
     "how_to_play": "How to play?",
-    "how_to_play_desc": "A question with two options will appear. Each player votes, then results are shown and discussion starts!",
+    "how_to_play_desc": "Pick one of two options and vote anonymously. The results are just the beginning. What truly matters is the conversation that comes next!",
     "players": "Number of players",
     "discussion_time": "Discussion time (minutes)"
   },
