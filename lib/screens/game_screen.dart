@@ -8,6 +8,7 @@ import '../data/questions_data.dart';
 import 'category_selection_screen.dart';
 import 'session_summary_screen.dart';
 import '../utils/app_scale.dart';
+import '../services/daily_streak_service.dart';
 
 class QuestionWithCategory {
   final Question question;
@@ -17,10 +18,7 @@ class QuestionWithCategory {
   QuestionWithCategory(this.question, this.categoryName, this.categoryData);
 }
 
-enum TimeUpAction {
-  needMoreTime,
-  nextQuestion,
-}
+enum TimeUpAction { needMoreTime, nextQuestion }
 
 class GameScreen extends StatefulWidget {
   final List<String> categories;
@@ -57,7 +55,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   int? _currentRoundResultIndex;
   int _currentRoundExtensions = 0;
   DateTime? _discussionStartedAt;
-  
+
   late AnimationController _resultsAnimationController;
   late AnimationController _timerAnimationController;
   late AnimationController _questionAnimationController;
@@ -74,7 +72,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    
+
     // Animation for results (fade in)
     _resultsAnimationController = AnimationController(
       duration: const Duration(milliseconds: 1000),
@@ -86,7 +84,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
         curve: Curves.easeOut,
       ),
     );
-    
+
     // Animation for timer (slide up + fade in)
     _timerAnimationController = AnimationController(
       duration: const Duration(milliseconds: 800),
@@ -102,12 +100,9 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       ),
     );
     _timerOpacityAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _timerAnimationController,
-        curve: Curves.easeIn,
-      ),
+      CurvedAnimation(parent: _timerAnimationController, curve: Curves.easeIn),
     );
-    
+
     // Animation for question transition (slide + fade)
     _questionAnimationController = AnimationController(
       duration: const Duration(milliseconds: 600),
@@ -128,7 +123,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
         curve: Curves.easeOut,
       ),
     );
-    
+
     // Animation for buttons (fade)
     _buttonsAnimationController = AnimationController(
       duration: const Duration(milliseconds: 500),
@@ -152,7 +147,6 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
         curve: Curves.easeInOut,
       ),
     );
-    
   }
 
   @override
@@ -197,7 +191,9 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       );
       final categoryData = widget.categoriesData[categoryName]!;
       for (Question question in questions) {
-        allQuestions.add(QuestionWithCategory(question, categoryName, categoryData));
+        allQuestions.add(
+          QuestionWithCategory(question, categoryName, categoryData),
+        );
       }
     }
   }
@@ -205,14 +201,11 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   void _setFallbackQuestion() {
     final fallbackCategoryName =
         widget.categories.isNotEmpty ? widget.categories.first : 'chill';
-    final fallbackCategoryData = widget.categoriesData[fallbackCategoryName] ??
+    final fallbackCategoryData =
+        widget.categoriesData[fallbackCategoryName] ??
         CategoryData('💭', const Color(0xFFB8D4FF));
     currentQuestionWithCategory = QuestionWithCategory(
-      Question(
-        text: 'No questions available',
-        option1: '1',
-        option2: '2',
-      ),
+      Question(text: 'No questions available', option1: '1', option2: '2'),
       fallbackCategoryName,
       fallbackCategoryData,
     );
@@ -232,7 +225,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   void _loadRandomQuestion() {
     final random = Random();
     if (allQuestions.isEmpty) return;
-    
+
     // Animate old question out, then load new question
     if (votingComplete) {
       // Fade out buttons and question
@@ -240,7 +233,8 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       _questionAnimationController.reverse().then((_) {
         if (mounted) {
           setState(() {
-            currentQuestionWithCategory = allQuestions[random.nextInt(allQuestions.length)];
+            currentQuestionWithCategory =
+                allQuestions[random.nextInt(allQuestions.length)];
             votesOption1 = 0;
             votesOption2 = 0;
             votingComplete = false;
@@ -262,7 +256,8 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       });
     } else {
       setState(() {
-        currentQuestionWithCategory = allQuestions[random.nextInt(allQuestions.length)];
+        currentQuestionWithCategory =
+            allQuestions[random.nextInt(allQuestions.length)];
         votesOption1 = 0;
         votesOption2 = 0;
         votingComplete = false;
@@ -293,20 +288,23 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       if (votesOption1 + votesOption2 == widget.numberOfPlayers) {
         votingComplete = true;
         final total = votesOption1 + votesOption2;
-        final majority = votesOption1 >= votesOption2 ? votesOption1 : votesOption2;
-        sessionRounds.add(RoundResult(
-          categoryName: currentQuestionWithCategory.categoryName,
-          questionText: currentQuestionWithCategory.question.text,
-          totalVotes: total,
-          majorityVotes: majority,
-          extensionsCount: 0,
-          discussionDurationSeconds: 0,
-        ));
+        final majority =
+            votesOption1 >= votesOption2 ? votesOption1 : votesOption2;
+        sessionRounds.add(
+          RoundResult(
+            categoryName: currentQuestionWithCategory.categoryName,
+            questionText: currentQuestionWithCategory.question.text,
+            totalVotes: total,
+            majorityVotes: majority,
+            extensionsCount: 0,
+            discussionDurationSeconds: 0,
+          ),
+        );
         _currentRoundResultIndex = sessionRounds.length - 1;
         _currentRoundExtensions = 0;
         _isInExtraTime = false;
         _discussionStartedAt = DateTime.now();
-        
+
         // Start animations with delays
         Future.delayed(const Duration(milliseconds: 400), () {
           if (mounted) {
@@ -318,10 +316,15 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
             _timerAnimationController.forward();
           }
         });
-        
+
         _startTimer();
+        unawaited(_registerDailyStreakProgress());
       }
     });
+  }
+
+  Future<void> _registerDailyStreakProgress() async {
+    await DailyStreakService.instance.registerDailyAnswer();
   }
 
   void _startTimer() {
@@ -387,132 +390,137 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   Future<TimeUpAction> _showContinueDiscussionDialog() async {
     final s = AppScale.of(context);
     final result = await showGeneralDialog<TimeUpAction>(
-          context: context,
-          barrierDismissible: false,
-          barrierLabel: 'continueDiscussionDialog',
-          barrierColor: Colors.black.withOpacity(0.25),
-          transitionDuration: const Duration(milliseconds: 220),
-          pageBuilder: (_, __, ___) {
-            return Center(
-              child: Material(
-                color: Colors.transparent,
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: s.w(392)),
-                  child: Container(
-                    margin: EdgeInsets.symmetric(horizontal: s.w(18)),
-                    padding: EdgeInsets.fromLTRB(
-                      s.w(22),
-                      s.h(20),
-                      s.w(22),
-                      s.h(16),
+      context: context,
+      barrierDismissible: false,
+      barrierLabel: 'continueDiscussionDialog',
+      barrierColor: Colors.black.withOpacity(0.25),
+      transitionDuration: const Duration(milliseconds: 220),
+      pageBuilder: (_, __, ___) {
+        return Center(
+          child: Material(
+            color: Colors.transparent,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: s.w(392)),
+              child: Container(
+                margin: EdgeInsets.symmetric(horizontal: s.w(18)),
+                padding: EdgeInsets.fromLTRB(
+                  s.w(22),
+                  s.h(20),
+                  s.w(22),
+                  s.h(16),
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(s.r(20)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.08),
+                      blurRadius: s.r(20),
+                      offset: Offset(0, s.h(6)),
                     ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(s.r(20)),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.08),
-                          blurRadius: s.r(20),
-                          offset: Offset(0, s.h(6)),
-                        ),
-                      ],
+                  ],
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'game.extend_title'.tr(),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: s.sp(22),
+                        color: Colors.grey[800],
+                      ),
                     ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    SizedBox(height: s.h(10)),
+                    Text(
+                      'game.extend_message'.tr(),
+                      style: TextStyle(
+                        fontSize: s.sp(16),
+                        color: Colors.grey[600],
+                        height: 1.35,
+                      ),
+                    ),
+                    SizedBox(height: s.h(18)),
+                    Row(
                       children: [
-                        Text(
-                          'game.extend_title'.tr(),
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: s.sp(22),
-                            color: Colors.grey[800],
-                          ),
-                        ),
-                        SizedBox(height: s.h(10)),
-                        Text(
-                          'game.extend_message'.tr(),
-                          style: TextStyle(
-                            fontSize: s.sp(16),
-                            color: Colors.grey[600],
-                            height: 1.35,
-                          ),
-                        ),
-                        SizedBox(height: s.h(18)),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: TextButton(
-                                onPressed: () => Navigator.of(context).pop(
-                                  TimeUpAction.nextQuestion,
-                                ),
-                                style: TextButton.styleFrom(
-                                  padding: EdgeInsets.symmetric(vertical: s.h(12)),
-                                ),
-                                child: FittedBox(
-                                  fit: BoxFit.scaleDown,
-                                  child: Text(
-                                    'buttons.next_short'.tr(),
-                                    maxLines: 1,
-                                    style: TextStyle(
-                                      fontSize: s.sp(15),
-                                      color: Colors.grey[600],
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
+                        Expanded(
+                          child: TextButton(
+                            onPressed:
+                                () => Navigator.of(
+                                  context,
+                                ).pop(TimeUpAction.nextQuestion),
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.symmetric(vertical: s.h(12)),
+                            ),
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                'buttons.next_short'.tr(),
+                                maxLines: 1,
+                                style: TextStyle(
+                                  fontSize: s.sp(15),
+                                  color: Colors.grey[600],
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
                             ),
-                            SizedBox(width: s.w(8)),
-                            Expanded(
-                              child: ElevatedButton(
-                                onPressed: () => Navigator.of(context).pop(
-                                  TimeUpAction.needMoreTime,
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFFB2E0D8),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(s.r(12)),
-                                  ),
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: s.w(12),
-                                    vertical: s.h(12),
-                                  ),
-                                ),
-                                child: FittedBox(
-                                  fit: BoxFit.scaleDown,
-                                  child: Text(
-                                    'buttons.need_more_time'.tr(),
-                                    maxLines: 1,
-                                    style: TextStyle(
-                                      fontSize: s.sp(15),
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey[800],
-                                    ),
-                                  ),
+                          ),
+                        ),
+                        SizedBox(width: s.w(8)),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed:
+                                () => Navigator.of(
+                                  context,
+                                ).pop(TimeUpAction.needMoreTime),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFFB2E0D8),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(s.r(12)),
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: s.w(12),
+                                vertical: s.h(12),
+                              ),
+                            ),
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                'buttons.need_more_time'.tr(),
+                                maxLines: 1,
+                                style: TextStyle(
+                                  fontSize: s.sp(15),
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey[800],
                                 ),
                               ),
                             ),
-                          ],
+                          ),
                         ),
                       ],
                     ),
-                  ),
+                  ],
                 ),
               ),
-            );
-          },
-          transitionBuilder: (context, animation, secondaryAnimation, child) {
-            final curve = CurvedAnimation(parent: animation, curve: Curves.easeOutCubic);
-            return FadeTransition(
-              opacity: curve,
-              child: ScaleTransition(
-                scale: Tween<double>(begin: 0.96, end: 1.0).animate(curve),
-                child: child,
-              ),
-            );
-          },
+            ),
+          ),
         );
+      },
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        final curve = CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeOutCubic,
+        );
+        return FadeTransition(
+          opacity: curve,
+          child: ScaleTransition(
+            scale: Tween<double>(begin: 0.96, end: 1.0).animate(curve),
+            child: child,
+          ),
+        );
+      },
+    );
 
     return result ?? TimeUpAction.nextQuestion;
   }
@@ -565,75 +573,75 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   Future<bool> _showExitDialog() async {
     final s = AppScale.of(context);
     return await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(s.r(20)),
-        ),
-        title: Text(
-          'game.exit_title'.tr(),
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: s.sp(22),
-            color: Colors.grey[800],
-          ),
-        ),
-        content: Text(
-          'game.exit_message'.tr(),
-          style: TextStyle(
-            fontSize: s.sp(16),
-            color: Colors.grey[600],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(
-              'buttons.cancel'.tr(),
-              style: TextStyle(
-                fontSize: s.sp(16),
-                color: Colors.grey[600],
-                fontWeight: FontWeight.w600,
+          context: context,
+          builder:
+              (context) => AlertDialog(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(s.r(20)),
+                ),
+                title: Text(
+                  'game.exit_title'.tr(),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: s.sp(22),
+                    color: Colors.grey[800],
+                  ),
+                ),
+                content: Text(
+                  'game.exit_message'.tr(),
+                  style: TextStyle(fontSize: s.sp(16), color: Colors.grey[600]),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(false),
+                    child: Text(
+                      'buttons.cancel'.tr(),
+                      style: TextStyle(
+                        fontSize: s.sp(16),
+                        color: Colors.grey[600],
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () => Navigator.of(context).pop(true),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFB2E0D8),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(s.r(12)),
+                      ),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: s.w(24),
+                        vertical: s.h(12),
+                      ),
+                    ),
+                    child: Text(
+                      'buttons.exit'.tr(),
+                      style: TextStyle(
+                        fontSize: s.sp(16),
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey[800],
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFB2E0D8),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(s.r(12)),
-              ),
-              padding: EdgeInsets.symmetric(
-                horizontal: s.w(24),
-                vertical: s.h(12),
-              ),
-            ),
-            child: Text(
-              'buttons.exit'.tr(),
-              style: TextStyle(
-                fontSize: s.sp(16),
-                fontWeight: FontWeight.bold,
-                color: Colors.grey[800],
-              ),
-            ),
-          ),
-        ],
-      ),
-    ) ?? false;
+        ) ??
+        false;
   }
 
   void _openSessionSummary() {
     _finalizeCurrentRoundDuration();
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
-        builder: (context) => SessionSummaryScreen(
-          roundResults: sessionRounds,
-          categories: widget.categories,
-          categoriesData: widget.categoriesData,
-          numberOfPlayers: widget.numberOfPlayers,
-          discussionTime: widget.discussionTime,
-        ),
+        builder:
+            (context) => SessionSummaryScreen(
+              roundResults: sessionRounds,
+              categories: widget.categories,
+              categoriesData: widget.categoriesData,
+              numberOfPlayers: widget.numberOfPlayers,
+              discussionTime: widget.discussionTime,
+            ),
       ),
     );
   }
@@ -655,9 +663,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
         backgroundColor: Colors.white,
         body: SafeArea(
           child: Center(
-            child: CircularProgressIndicator(
-              color: Color(0xFFB2E0D8),
-            ),
+            child: CircularProgressIndicator(color: Color(0xFFB2E0D8)),
           ),
         ),
       );
@@ -674,375 +680,434 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       child: Scaffold(
         backgroundColor: Colors.white,
         body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              currentQuestionWithCategory.categoryData.color.withOpacity(0.3),
-              Colors.white,
-              Colors.white,
-            ],
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                currentQuestionWithCategory.categoryData.color.withOpacity(0.3),
+                Colors.white,
+                Colors.white,
+              ],
+            ),
           ),
-        ),
-        child: SafeArea(
-          child: Padding(
-            padding: EdgeInsets.all(s.r(24)),
-            child: useScrollFallback
-                ? SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        // Header with back button
-                        Row(
+          child: SafeArea(
+            child: Padding(
+              padding: EdgeInsets.all(s.r(24)),
+              child:
+                  useScrollFallback
+                      ? SingleChildScrollView(
+                        child: Column(
                           children: [
-                            IconButton(
-                              onPressed: () async {
-                                final shouldExit = await _showExitDialog();
-                                if (shouldExit && mounted) {
-                                  _openSessionSummary();
-                                }
-                              },
-                              icon: Icon(
-                                Icons.arrow_back_ios_new,
-                                color: Colors.grey[700],
-                                size: s.r(24),
-                              ),
-                              padding: EdgeInsets.zero,
+                            // Header with back button
+                            Row(
+                              children: [
+                                IconButton(
+                                  onPressed: () async {
+                                    final shouldExit = await _showExitDialog();
+                                    if (shouldExit && mounted) {
+                                      _openSessionSummary();
+                                    }
+                                  },
+                                  icon: Icon(
+                                    Icons.arrow_back_ios_new,
+                                    color: Colors.grey[700],
+                                    size: s.r(24),
+                                  ),
+                                  padding: EdgeInsets.zero,
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
 
-                        SizedBox(height: isCompact ? s.h(24) : s.h(40)),
+                            SizedBox(height: isCompact ? s.h(24) : s.h(40)),
 
-                        // Question with animation
-                        SizedBox(
-                          height: s.h(165),
-                          child: Center(
-                            child: FadeTransition(
-                              opacity: _questionOpacityAnimation,
-                              child: SlideTransition(
-                                position: _questionSlideAnimation,
-                                child: Text(
-                                  currentQuestionWithCategory.question.text,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: questionFontSize,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.grey[800],
-                                    height: 1.3,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-
-                        SizedBox(height: isCompact ? s.h(24) : s.h(40)),
-
-                        // Voting buttons with animation
-                        FadeTransition(
-                          opacity: _buttonsOpacityAnimation,
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: _buildVotingButton(
-                                  '1',
-                                  1,
-                                  votesOption1,
-                                  _lightenColor(
-                                    currentQuestionWithCategory.categoryData.color,
-                                    0.1,
-                                  ),
-                                  isCompact,
-                                ),
-                              ),
-                              SizedBox(width: s.w(20)),
-                              Expanded(
-                                child: _buildVotingButton(
-                                  '2',
-                                  2,
-                                  votesOption2,
-                                  _darkenColor(
-                                    currentQuestionWithCategory.categoryData.color,
-                                    0.1,
-                                  ),
-                                  isCompact,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        SizedBox(height: isCompact ? s.h(12) : s.h(20)),
-
-                        // Vote counter
-                        Text(
-                          'game.votes'.tr(args: [
-                            '${votesOption1 + votesOption2}',
-                            '${widget.numberOfPlayers}',
-                          ]),
-                          style: TextStyle(
-                            fontSize: s.sp(16),
-                            color: Colors.grey[600],
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-
-                        SizedBox(height: sectionGap),
-
-                        // Timer (pokazuje się po zakończeniu głosowania)
-                        if (votingComplete) ...[
-                          FadeTransition(
-                            opacity: _timerOpacityAnimation,
-                            child: SlideTransition(
-                              position: _timerSlideAnimation,
-                              child: Column(
-                                children: [
-                                  Container(
-                                    padding: EdgeInsets.all(isCompact ? s.r(16) : s.r(20)),
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey[100],
-                                      borderRadius: BorderRadius.circular(s.r(20)),
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        Text(
-                                          _isInExtraTime
-                                              ? 'game.extra_time'.tr()
-                                              : remainingSeconds > 0
-                                                  ? 'game.discussion_time'.tr()
-                                                  : 'game.time_up'.tr(),
-                                          style: TextStyle(
-                                            fontSize: s.sp(16),
-                                            color: Colors.grey[700],
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                        SizedBox(height: isCompact ? s.h(6) : s.h(8)),
-                                        ScaleTransition(
-                                          scale: _shouldShowTickPulse
-                                              ? _tickScaleAnimation
-                                              : const AlwaysStoppedAnimation(1.0),
-                                          child: Text(
-                                            _isInExtraTime ? '∞' : _formatTime(remainingSeconds),
-                                            style: TextStyle(
-                                              fontSize: timerFontSize,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.grey[800],
-                                              fontFamily: 'monospace',
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(height: isCompact ? s.h(14) : s.h(20)),
-                                  ElevatedButton(
-                                    onPressed: _goToNextQuestion,
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor:
-                                          currentQuestionWithCategory.categoryData.color,
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: s.w(40),
-                                        vertical: nextButtonVerticalPadding,
-                                      ),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(s.r(30)),
-                                      ),
-                                    ),
+                            // Question with animation
+                            SizedBox(
+                              height: s.h(165),
+                              child: Center(
+                                child: FadeTransition(
+                                  opacity: _questionOpacityAnimation,
+                                  child: SlideTransition(
+                                    position: _questionSlideAnimation,
                                     child: Text(
-                                      'buttons.next'.tr(),
+                                      currentQuestionWithCategory.question.text,
+                                      textAlign: TextAlign.center,
                                       style: TextStyle(
-                                        fontSize: s.sp(18),
+                                        fontSize: questionFontSize,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.grey[800],
+                                        height: 1.3,
                                       ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            SizedBox(height: isCompact ? s.h(24) : s.h(40)),
+
+                            // Voting buttons with animation
+                            FadeTransition(
+                              opacity: _buttonsOpacityAnimation,
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: _buildVotingButton(
+                                      '1',
+                                      1,
+                                      votesOption1,
+                                      _lightenColor(
+                                        currentQuestionWithCategory
+                                            .categoryData
+                                            .color,
+                                        0.1,
+                                      ),
+                                      isCompact,
+                                    ),
+                                  ),
+                                  SizedBox(width: s.w(20)),
+                                  Expanded(
+                                    child: _buildVotingButton(
+                                      '2',
+                                      2,
+                                      votesOption2,
+                                      _darkenColor(
+                                        currentQuestionWithCategory
+                                            .categoryData
+                                            .color,
+                                        0.1,
+                                      ),
+                                      isCompact,
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-                          ),
-                        ],
 
-                        SizedBox(height: isCompact ? s.h(12) : s.h(20)),
-                      ],
-                    ),
-                  )
-                : Column(
-              children: [
-                // Header with back button
-                Row(
-                  children: [
-                    IconButton(
-                      onPressed: () async {
-                        final shouldExit = await _showExitDialog();
-                        if (shouldExit && mounted) {
-                          _openSessionSummary();
-                        }
-                      },
-                      icon: Icon(
-                        Icons.arrow_back_ios_new,
-                        color: Colors.grey[700],
-                        size: s.r(24),
-                      ),
-                      padding: EdgeInsets.zero,
-                    ),
-                  ],
-                ),
+                            SizedBox(height: isCompact ? s.h(12) : s.h(20)),
 
-                SizedBox(height: isCompact ? s.h(24) : s.h(40)),
-
-              // Question with animation
-              Expanded(
-                child: Center(
-                  child: FadeTransition(
-                    opacity: _questionOpacityAnimation,
-                    child: SlideTransition(
-                      position: _questionSlideAnimation,
-                      child: Text(
-                        currentQuestionWithCategory.question.text,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: questionFontSize,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey[800],
-                          height: 1.3,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-
-              SizedBox(height: isCompact ? s.h(24) : s.h(40)),
-
-              // Voting buttons with animation
-              FadeTransition(
-                opacity: _buttonsOpacityAnimation,
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: _buildVotingButton(
-                        '1',
-                        1,
-                        votesOption1,
-                        _lightenColor(currentQuestionWithCategory.categoryData.color, 0.1),
-                        isCompact,
-                      ),
-                    ),
-                    SizedBox(width: s.w(20)),
-                    Expanded(
-                      child: _buildVotingButton(
-                        '2',
-                        2,
-                        votesOption2,
-                        _darkenColor(currentQuestionWithCategory.categoryData.color, 0.1),
-                        isCompact,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              SizedBox(height: isCompact ? s.h(12) : s.h(20)),
-
-              // Vote counter
-              Text(
-                'game.votes'.tr(args: [
-                  '${votesOption1 + votesOption2}',
-                  '${widget.numberOfPlayers}',
-                ]),
-                style: TextStyle(
-                  fontSize: s.sp(16),
-                  color: Colors.grey[600],
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-
-              SizedBox(height: sectionGap),
-
-              // Timer (pokazuje się po zakończeniu głosowania)
-              if (votingComplete) ...[
-                FadeTransition(
-                  opacity: _timerOpacityAnimation,
-                  child: SlideTransition(
-                    position: _timerSlideAnimation,
-                    child: Column(
-                      children: [
-                        Container(
-                          padding: EdgeInsets.all(isCompact ? s.r(16) : s.r(20)),
-                          decoration: BoxDecoration(
-                            color: Colors.grey[100],
-                            borderRadius: BorderRadius.circular(s.r(20)),
-                          ),
-                          child: Column(
-                            children: [
-                              Text(
-                                _isInExtraTime
-                                    ? 'game.extra_time'.tr()
-                                    : remainingSeconds > 0
-                                        ? 'game.discussion_time'.tr()
-                                        : 'game.time_up'.tr(),
-                                style: TextStyle(
-                                  fontSize: s.sp(16),
-                                  color: Colors.grey[700],
-                                  fontWeight: FontWeight.w600,
-                                ),
+                            // Vote counter
+                            Text(
+                              'game.votes'.tr(
+                                args: [
+                                  '${votesOption1 + votesOption2}',
+                                  '${widget.numberOfPlayers}',
+                                ],
                               ),
-                              SizedBox(height: isCompact ? s.h(6) : s.h(8)),
-                              ScaleTransition(
-                                scale: _shouldShowTickPulse
-                                    ? _tickScaleAnimation
-                                    : const AlwaysStoppedAnimation(1.0),
-                                child: Text(
-                                  _isInExtraTime ? '∞' : _formatTime(remainingSeconds),
-                                  style: TextStyle(
-                                    fontSize: timerFontSize,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.grey[800],
-                                    fontFamily: 'monospace',
+                              style: TextStyle(
+                                fontSize: s.sp(16),
+                                color: Colors.grey[600],
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+
+                            SizedBox(height: sectionGap),
+
+                            // Timer (pokazuje się po zakończeniu głosowania)
+                            if (votingComplete) ...[
+                              FadeTransition(
+                                opacity: _timerOpacityAnimation,
+                                child: SlideTransition(
+                                  position: _timerSlideAnimation,
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        padding: EdgeInsets.all(
+                                          isCompact ? s.r(16) : s.r(20),
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey[100],
+                                          borderRadius: BorderRadius.circular(
+                                            s.r(20),
+                                          ),
+                                        ),
+                                        child: Column(
+                                          children: [
+                                            Text(
+                                              _isInExtraTime
+                                                  ? 'game.extra_time'.tr()
+                                                  : remainingSeconds > 0
+                                                  ? 'game.discussion_time'.tr()
+                                                  : 'game.time_up'.tr(),
+                                              style: TextStyle(
+                                                fontSize: s.sp(16),
+                                                color: Colors.grey[700],
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height:
+                                                  isCompact ? s.h(6) : s.h(8),
+                                            ),
+                                            ScaleTransition(
+                                              scale:
+                                                  _shouldShowTickPulse
+                                                      ? _tickScaleAnimation
+                                                      : const AlwaysStoppedAnimation(
+                                                        1.0,
+                                                      ),
+                                              child: Text(
+                                                _isInExtraTime
+                                                    ? '∞'
+                                                    : _formatTime(
+                                                      remainingSeconds,
+                                                    ),
+                                                style: TextStyle(
+                                                  fontSize: timerFontSize,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.grey[800],
+                                                  fontFamily: 'monospace',
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: isCompact ? s.h(14) : s.h(20),
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: _goToNextQuestion,
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor:
+                                              currentQuestionWithCategory
+                                                  .categoryData
+                                                  .color,
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: s.w(40),
+                                            vertical: nextButtonVerticalPadding,
+                                          ),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              s.r(30),
+                                            ),
+                                          ),
+                                        ),
+                                        child: Text(
+                                          'buttons.next'.tr(),
+                                          style: TextStyle(
+                                            fontSize: s.sp(18),
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.grey[800],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),
                             ],
-                          ),
-                        ),
-                        SizedBox(height: isCompact ? s.h(14) : s.h(20)),
-                        ElevatedButton(
-                          onPressed: _goToNextQuestion,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: currentQuestionWithCategory.categoryData.color,
-                            padding: EdgeInsets.symmetric(
-                              horizontal: s.w(40),
-                              vertical: nextButtonVerticalPadding,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(s.r(30)),
-                            ),
-                          ),
-                          child: Text(
-                            'buttons.next'.tr(),
-                            style: TextStyle(
-                              fontSize: s.sp(18),
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey[800],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
 
-              SizedBox(height: isCompact ? s.h(12) : s.h(20)),
-              ],
+                            SizedBox(height: isCompact ? s.h(12) : s.h(20)),
+                          ],
+                        ),
+                      )
+                      : Column(
+                        children: [
+                          // Header with back button
+                          Row(
+                            children: [
+                              IconButton(
+                                onPressed: () async {
+                                  final shouldExit = await _showExitDialog();
+                                  if (shouldExit && mounted) {
+                                    _openSessionSummary();
+                                  }
+                                },
+                                icon: Icon(
+                                  Icons.arrow_back_ios_new,
+                                  color: Colors.grey[700],
+                                  size: s.r(24),
+                                ),
+                                padding: EdgeInsets.zero,
+                              ),
+                            ],
+                          ),
+
+                          SizedBox(height: isCompact ? s.h(24) : s.h(40)),
+
+                          // Question with animation
+                          Expanded(
+                            child: Center(
+                              child: FadeTransition(
+                                opacity: _questionOpacityAnimation,
+                                child: SlideTransition(
+                                  position: _questionSlideAnimation,
+                                  child: Text(
+                                    currentQuestionWithCategory.question.text,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: questionFontSize,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.grey[800],
+                                      height: 1.3,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          SizedBox(height: isCompact ? s.h(24) : s.h(40)),
+
+                          // Voting buttons with animation
+                          FadeTransition(
+                            opacity: _buttonsOpacityAnimation,
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: _buildVotingButton(
+                                    '1',
+                                    1,
+                                    votesOption1,
+                                    _lightenColor(
+                                      currentQuestionWithCategory
+                                          .categoryData
+                                          .color,
+                                      0.1,
+                                    ),
+                                    isCompact,
+                                  ),
+                                ),
+                                SizedBox(width: s.w(20)),
+                                Expanded(
+                                  child: _buildVotingButton(
+                                    '2',
+                                    2,
+                                    votesOption2,
+                                    _darkenColor(
+                                      currentQuestionWithCategory
+                                          .categoryData
+                                          .color,
+                                      0.1,
+                                    ),
+                                    isCompact,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          SizedBox(height: isCompact ? s.h(12) : s.h(20)),
+
+                          // Vote counter
+                          Text(
+                            'game.votes'.tr(
+                              args: [
+                                '${votesOption1 + votesOption2}',
+                                '${widget.numberOfPlayers}',
+                              ],
+                            ),
+                            style: TextStyle(
+                              fontSize: s.sp(16),
+                              color: Colors.grey[600],
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+
+                          SizedBox(height: sectionGap),
+
+                          // Timer (pokazuje się po zakończeniu głosowania)
+                          if (votingComplete) ...[
+                            FadeTransition(
+                              opacity: _timerOpacityAnimation,
+                              child: SlideTransition(
+                                position: _timerSlideAnimation,
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      padding: EdgeInsets.all(
+                                        isCompact ? s.r(16) : s.r(20),
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey[100],
+                                        borderRadius: BorderRadius.circular(
+                                          s.r(20),
+                                        ),
+                                      ),
+                                      child: Column(
+                                        children: [
+                                          Text(
+                                            _isInExtraTime
+                                                ? 'game.extra_time'.tr()
+                                                : remainingSeconds > 0
+                                                ? 'game.discussion_time'.tr()
+                                                : 'game.time_up'.tr(),
+                                            style: TextStyle(
+                                              fontSize: s.sp(16),
+                                              color: Colors.grey[700],
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: isCompact ? s.h(6) : s.h(8),
+                                          ),
+                                          ScaleTransition(
+                                            scale:
+                                                _shouldShowTickPulse
+                                                    ? _tickScaleAnimation
+                                                    : const AlwaysStoppedAnimation(
+                                                      1.0,
+                                                    ),
+                                            child: Text(
+                                              _isInExtraTime
+                                                  ? '∞'
+                                                  : _formatTime(
+                                                    remainingSeconds,
+                                                  ),
+                                              style: TextStyle(
+                                                fontSize: timerFontSize,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.grey[800],
+                                                fontFamily: 'monospace',
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: isCompact ? s.h(14) : s.h(20),
+                                    ),
+                                    ElevatedButton(
+                                      onPressed: _goToNextQuestion,
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor:
+                                            currentQuestionWithCategory
+                                                .categoryData
+                                                .color,
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: s.w(40),
+                                          vertical: nextButtonVerticalPadding,
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            s.r(30),
+                                          ),
+                                        ),
+                                      ),
+                                      child: Text(
+                                        'buttons.next'.tr(),
+                                        style: TextStyle(
+                                          fontSize: s.sp(18),
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey[800],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+
+                          SizedBox(height: isCompact ? s.h(12) : s.h(20)),
+                        ],
+                      ),
             ),
           ),
         ),
       ),
-    ),
     );
   }
 

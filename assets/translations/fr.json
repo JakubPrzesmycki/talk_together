@@ -68,6 +68,15 @@
     "full_agreement_count_other": "{} questions se sont terminées en accord total.",
     "full_agreement_none": "Aucune question ne s'est terminée en accord total pendant cette session."
   },
+  "streak": {
+    "title": "Série quotidienne",
+    "days_label": "jours d'affilée",
+    "status_completed_today": "Parfait, la réponse d'aujourd'hui est déjà comptée.",
+    "status_ready_today": "Aujourd'hui, vous pouvez prolonger votre série.",
+    "description": "Une réponse par jour aide à garder une habitude saine de conversations quotidiennes.",
+    "close": "Fermer",
+    "answer_today": "Répondre aujourd'hui"
+  },
   "categories": {
     "chill": "Détente",
     "family": "Famille",

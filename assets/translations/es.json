@@ -68,6 +68,15 @@
     "full_agreement_count_other": "{} preguntas terminaron con acuerdo total.",
     "full_agreement_none": "En esta sesión no hubo preguntas con acuerdo total."
   },
+  "streak": {
+    "title": "Racha diaria",
+    "days_label": "días seguidos",
+    "status_completed_today": "Genial, hoy ya cuenta.",
+    "status_ready_today": "Hoy puedes extender tu racha.",
+    "description": "Una respuesta al día ayuda a mantener un hábito sano de conversaciones diarias.",
+    "close": "Cerrar",
+    "answer_today": "Responder hoy"
+  },
   "categories": {
     "chill": "Relax",
     "family": "Familia",

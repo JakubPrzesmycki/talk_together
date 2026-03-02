@@ -68,6 +68,15 @@
     "full_agreement_count_other": "{} pytań zakończyło się pełną zgodą.",
     "full_agreement_none": "W tej sesji nie było pytań z pełną zgodą."
   },
+  "streak": {
+    "title": "Daily Streak",
+    "days_label": "dni z rzędu",
+    "status_completed_today": "Super, dzisiejsza odpowiedź już zaliczona.",
+    "status_ready_today": "Dzisiaj możesz przedłużyć swoją serię.",
+    "description": "Jedna odpowiedź dziennie pomaga utrzymać rytm rozmów i budować codzienny nawyk.",
+    "close": "Zamknij",
+    "answer_today": "Odpowiedz dziś"
+  },
   "categories": {
     "chill": "Na luzie",
     "family": "Rodzinne",

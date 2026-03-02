@@ -68,6 +68,15 @@
     "full_agreement_count_other": "{} questions ended with full agreement.",
     "full_agreement_none": "No questions ended with full agreement in this session."
   },
+  "streak": {
+    "title": "Daily Streak",
+    "days_label": "days in a row",
+    "status_completed_today": "Great, today is already counted.",
+    "status_ready_today": "You can extend your streak today.",
+    "description": "One answer per day helps keep a healthy habit of daily conversations.",
+    "close": "Close",
+    "answer_today": "Answer today"
+  },
   "categories": {
     "chill": "Chill",
     "family": "Family",
