@@ -9,6 +9,10 @@ class DailyStreakService {
 
   static const String _streakDaysKey = 'daily_streak.days';
   static const String _lastAnsweredKey = 'daily_streak.last_answered_date';
+  static const String _shownDailyQuestionDateKey =
+      'daily_streak.shown_daily_question_date';
+  static const String _shownDailyQuestionTextKey =
+      'daily_streak.shown_daily_question_text';
 
   Future<DailyStreakStatus> getStatus({DateTime? now}) async {
     final prefs = await SharedPreferences.getInstance();
@@ -67,6 +71,35 @@ class DailyStreakService {
       hasAnsweredToday: true,
       lastAnsweredDate: today,
     );
+  }
+
+  Future<String?> getShownDailyQuestionTextForToday({DateTime? now}) async {
+    final prefs = await SharedPreferences.getInstance();
+    final DateTime today = _normalizeToLocalDate(now ?? DateTime.now());
+    final String todayKey = _formatDate(today);
+    final String? savedDate = prefs.getString(_shownDailyQuestionDateKey);
+    final String? savedText = prefs.getString(_shownDailyQuestionTextKey);
+
+    if (savedDate == todayKey && savedText != null && savedText.isNotEmpty) {
+      return savedText;
+    }
+
+    if (savedDate != null && savedDate != todayKey) {
+      await prefs.remove(_shownDailyQuestionDateKey);
+      await prefs.remove(_shownDailyQuestionTextKey);
+    }
+    return null;
+  }
+
+  Future<void> saveShownDailyQuestionForToday(
+    String questionText, {
+    DateTime? now,
+  }) async {
+    if (questionText.trim().isEmpty) return;
+    final prefs = await SharedPreferences.getInstance();
+    final DateTime today = _normalizeToLocalDate(now ?? DateTime.now());
+    await prefs.setString(_shownDailyQuestionDateKey, _formatDate(today));
+    await prefs.setString(_shownDailyQuestionTextKey, questionText.trim());
   }
 
   DateTime _normalizeToLocalDate(DateTime dateTime) {

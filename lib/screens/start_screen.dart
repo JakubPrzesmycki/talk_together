@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+
+import '../data/questions_data.dart';
 import 'game_settings_screen.dart';
-import '../utils/app_scale.dart';
 import '../models/daily_streak_status.dart';
 import '../services/daily_streak_service.dart';
+import '../utils/app_scale.dart';
 
 class StartScreen extends StatefulWidget {
   const StartScreen({super.key});
@@ -51,7 +53,8 @@ class _StartScreenState extends State<StartScreen>
     final s = AppScale.of(context);
     final isTabletLike = MediaQuery.sizeOf(context).width >= 700;
     final languageHandleFactor = isTabletLike ? 1.25 : 1.0;
-    final streakHandleFactor = isTabletLike ? 1.18 : 1.0;
+    final streakHandleFactor = languageHandleFactor;
+    final handleWidth = s.w(68 * languageHandleFactor);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -165,140 +168,139 @@ class _StartScreenState extends State<StartScreen>
               ),
             ),
             Positioned(
-              right: -6,
-              bottom: s.h(24),
-              child: GestureDetector(
-                onTap: _showStreakDialog,
-                onTapDown: (_) => setState(() => _isStreakHandlePressed = true),
-                onTapUp: (_) => setState(() => _isStreakHandlePressed = false),
-                onTapCancel:
-                    () => setState(() => _isStreakHandlePressed = false),
-                child: AnimatedScale(
-                  duration: const Duration(milliseconds: 130),
-                  curve: Curves.easeOutCubic,
-                  scale: _isStreakHandlePressed ? 0.96 : 1,
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 130),
-                    curve: Curves.easeOutCubic,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: s.w(14 * streakHandleFactor),
-                      vertical: s.h(10 * streakHandleFactor),
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[100],
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(s.r(16 * streakHandleFactor)),
-                        bottomLeft: Radius.circular(
-                          s.r(16 * streakHandleFactor),
-                        ),
-                      ),
-                      border: Border.all(color: Colors.grey[300]!),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(
-                            _isStreakHandlePressed ? 0.08 : 0.15,
-                          ),
-                          blurRadius: s.r(_isStreakHandlePressed ? 6 : 10),
-                          offset: Offset(
-                            0,
-                            s.h(_isStreakHandlePressed ? 1 : 3),
-                          ),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.local_fire_department_outlined,
-                          size: s.r(16 * streakHandleFactor),
-                          color: Colors.grey[700],
-                        ),
-                        SizedBox(width: s.w(6 * streakHandleFactor)),
-                        Text(
-                          '${_streakStatus.streakDays}',
-                          style: TextStyle(
-                            fontSize: s.sp(14 * streakHandleFactor),
-                            fontWeight: FontWeight.w700,
-                            color: Colors.grey[800],
-                          ),
-                        ),
-                        SizedBox(width: s.w(2 * streakHandleFactor)),
-                        Icon(
-                          Icons.chevron_left,
-                          size: s.r(16 * streakHandleFactor),
-                          color: Colors.grey[600],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            Positioned(
               left: -6,
               bottom: s.h(24),
-              child: GestureDetector(
-                onTap: _showLanguageDialog,
-                onTapDown:
-                    (_) => setState(() => _isLanguageHandlePressed = true),
-                onTapUp:
-                    (_) => setState(() => _isLanguageHandlePressed = false),
-                onTapCancel:
-                    () => setState(() => _isLanguageHandlePressed = false),
-                child: AnimatedScale(
-                  duration: const Duration(milliseconds: 130),
-                  curve: Curves.easeOutCubic,
-                  scale: _isLanguageHandlePressed ? 0.96 : 1,
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 130),
-                    curve: Curves.easeOutCubic,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: s.w(14 * languageHandleFactor),
-                      vertical: s.h(10 * languageHandleFactor),
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[100],
-                      borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(
-                          s.r(16 * languageHandleFactor),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  GestureDetector(
+                    onTap: _showStreakDialog,
+                    onTapDown: (_) => setState(() => _isStreakHandlePressed = true),
+                    onTapUp: (_) => setState(() => _isStreakHandlePressed = false),
+                    onTapCancel:
+                        () => setState(() => _isStreakHandlePressed = false),
+                    child: AnimatedScale(
+                      duration: const Duration(milliseconds: 130),
+                      curve: Curves.easeOutCubic,
+                      scale: _isStreakHandlePressed ? 0.96 : 1,
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 130),
+                        curve: Curves.easeOutCubic,
+                        constraints: BoxConstraints.tightFor(width: handleWidth),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: s.w(14 * streakHandleFactor),
+                          vertical: s.h(10 * streakHandleFactor),
                         ),
-                        bottomRight: Radius.circular(
-                          s.r(16 * languageHandleFactor),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[100],
+                          borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(s.r(16 * streakHandleFactor)),
+                            bottomRight: Radius.circular(
+                              s.r(16 * streakHandleFactor),
+                            ),
+                          ),
+                          border: Border.all(color: Colors.grey[300]!),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(
+                                _isStreakHandlePressed ? 0.08 : 0.15,
+                              ),
+                              blurRadius: s.r(_isStreakHandlePressed ? 6 : 10),
+                              offset: Offset(
+                                0,
+                                s.h(_isStreakHandlePressed ? 1 : 3),
+                              ),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.local_fire_department_outlined,
+                              size: s.r(15 * streakHandleFactor),
+                              color: Colors.grey[700],
+                            ),
+                            SizedBox(width: s.w(4 * streakHandleFactor)),
+                            Text(
+                              '${_streakStatus.streakDays}',
+                              style: TextStyle(
+                                fontSize: s.sp(13 * streakHandleFactor),
+                                fontWeight: FontWeight.w700,
+                                height: 1.0,
+                                color: Colors.grey[700],
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      border: Border.all(color: Colors.grey[300]!),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(
-                            _isLanguageHandlePressed ? 0.08 : 0.15,
-                          ),
-                          blurRadius: s.r(_isLanguageHandlePressed ? 6 : 10),
-                          offset: Offset(
-                            0,
-                            s.h(_isLanguageHandlePressed ? 1 : 3),
-                          ),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.translate,
-                          size: s.r(15 * languageHandleFactor),
-                          color: Colors.grey[700],
-                        ),
-                        SizedBox(width: s.w(4 * languageHandleFactor)),
-                        Icon(
-                          Icons.chevron_right,
-                          size: s.r(16 * languageHandleFactor),
-                          color: Colors.grey[600],
-                        ),
-                      ],
                     ),
                   ),
-                ),
+                  SizedBox(height: s.h(14)),
+                  GestureDetector(
+                    onTap: _showLanguageDialog,
+                    onTapDown:
+                        (_) => setState(() => _isLanguageHandlePressed = true),
+                    onTapUp:
+                        (_) => setState(() => _isLanguageHandlePressed = false),
+                    onTapCancel:
+                        () => setState(() => _isLanguageHandlePressed = false),
+                    child: AnimatedScale(
+                      duration: const Duration(milliseconds: 130),
+                      curve: Curves.easeOutCubic,
+                      scale: _isLanguageHandlePressed ? 0.96 : 1,
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 130),
+                        curve: Curves.easeOutCubic,
+                        constraints: BoxConstraints.tightFor(width: handleWidth),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: s.w(14 * languageHandleFactor),
+                          vertical: s.h(10 * languageHandleFactor),
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[100],
+                          borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(
+                              s.r(16 * languageHandleFactor),
+                            ),
+                            bottomRight: Radius.circular(
+                              s.r(16 * languageHandleFactor),
+                            ),
+                          ),
+                          border: Border.all(color: Colors.grey[300]!),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(
+                                _isLanguageHandlePressed ? 0.08 : 0.15,
+                              ),
+                              blurRadius: s.r(_isLanguageHandlePressed ? 6 : 10),
+                              offset: Offset(
+                                0,
+                                s.h(_isLanguageHandlePressed ? 1 : 3),
+                              ),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.translate,
+                              size: s.r(15 * languageHandleFactor),
+                              color: Colors.grey[700],
+                            ),
+                            SizedBox(width: s.w(4 * languageHandleFactor)),
+                            Icon(
+                              Icons.chevron_right,
+                              size: s.r(16 * languageHandleFactor),
+                              color: Colors.grey[700],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -355,26 +357,6 @@ class _StartScreenState extends State<StartScreen>
                       onTap:
                           () => setDialogState(
                             () => selectedLocale = const Locale('en'),
-                          ),
-                    ),
-                    SizedBox(height: s.h(10)),
-                    _buildLanguageTile(
-                      title: 'language.spanish'.tr(),
-                      locale: const Locale('es'),
-                      selectedLocale: selectedLocale,
-                      onTap:
-                          () => setDialogState(
-                            () => selectedLocale = const Locale('es'),
-                          ),
-                    ),
-                    SizedBox(height: s.h(10)),
-                    _buildLanguageTile(
-                      title: 'language.french'.tr(),
-                      locale: const Locale('fr'),
-                      selectedLocale: selectedLocale,
-                      onTap:
-                          () => setDialogState(
-                            () => selectedLocale = const Locale('fr'),
                           ),
                     ),
                   ],
@@ -471,137 +453,269 @@ class _StartScreenState extends State<StartScreen>
     if (!mounted) return;
 
     final s = AppScale.of(context);
-    final bool answeredToday = _streakStatus.hasAnsweredToday;
-    final String statusKey =
-        answeredToday
+    bool dialogAnsweredToday = _streakStatus.hasAnsweredToday;
+    String statusKey =
+        dialogAnsweredToday
             ? 'streak.status_completed_today'
+            : _streakStatus.streakDays == 0
+            ? 'streak.status_start_today'
             : 'streak.status_ready_today';
+    final String streakDaysLabelKey =
+        _streakStatus.streakDays == 1
+            ? 'streak.day_label_singular'
+            : 'streak.days_label';
+    String? dailyQuestionText = await DailyStreakService.instance
+        .getShownDailyQuestionTextForToday();
+    if (dailyQuestionText != null && !dialogAnsweredToday) {
+      final updatedStatus = await DailyStreakService.instance.registerDailyAnswer();
+      if (!mounted) return;
+      setState(() => _streakStatus = updatedStatus);
+      dialogAnsweredToday = updatedStatus.hasAnsweredToday;
+      statusKey = 'streak.status_completed_today';
+    }
+    bool isLoadingDailyQuestion = false;
 
     await showDialog<void>(
       context: context,
       builder:
-          (dialogContext) => AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(s.r(22)),
-            ),
-            backgroundColor: Colors.white,
-            contentPadding: EdgeInsets.fromLTRB(
-              s.w(20),
-              s.h(20),
-              s.w(20),
-              s.h(16),
-            ),
-            title: Row(
-              children: [
-                Icon(
-                  Icons.local_fire_department_outlined,
-                  color: const Color(0xFF7FC4B3),
-                  size: s.r(22),
-                ),
-                SizedBox(width: s.w(8)),
-                Text(
-                  'streak.title'.tr(),
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: s.sp(21),
-                    color: Colors.grey[800],
+          (dialogContext) => StatefulBuilder(
+            builder:
+                (context, setDialogState) => AlertDialog(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(s.r(22)),
                   ),
-                ),
-              ],
-            ),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.symmetric(
-                    vertical: s.h(14),
-                    horizontal: s.w(14),
+                  backgroundColor: Colors.white,
+                  contentPadding: EdgeInsets.fromLTRB(
+                    s.w(20),
+                    s.h(20),
+                    s.w(20),
+                    s.h(16),
                   ),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFB2E0D8).withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(s.r(14)),
-                    border: Border.all(color: const Color(0xFF9FD4C7)),
-                  ),
-                  child: Column(
+                  title: Row(
                     children: [
-                      Text(
-                        '${_streakStatus.streakDays}',
-                        style: TextStyle(
-                          fontSize: s.sp(32),
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey[800],
-                        ),
+                      Icon(
+                        Icons.local_fire_department_outlined,
+                        color: const Color(0xFF7FC4B3),
+                        size: s.r(22),
                       ),
+                      SizedBox(width: s.w(8)),
                       Text(
-                        'streak.days_label'.tr(),
+                        'streak.title'.tr(),
                         style: TextStyle(
-                          fontSize: s.sp(13),
-                          fontWeight: FontWeight.w600,
-                          color: Colors.grey[700],
+                          fontWeight: FontWeight.bold,
+                          fontSize: s.sp(21),
+                          color: Colors.grey[800],
                         ),
                       ),
                     ],
                   ),
-                ),
-                SizedBox(height: s.h(12)),
-                Text(
-                  statusKey.tr(),
-                  style: TextStyle(
-                    fontSize: s.sp(14),
-                    fontWeight: FontWeight.w600,
-                    color: Colors.grey[800],
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.symmetric(
+                          vertical: s.h(14),
+                          horizontal: s.w(14),
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFB2E0D8).withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(s.r(14)),
+                          border: Border.all(color: const Color(0xFF9FD4C7)),
+                        ),
+                        child: Column(
+                          children: [
+                            Text(
+                              '${_streakStatus.streakDays}',
+                              style: TextStyle(
+                                fontSize: s.sp(32),
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey[800],
+                              ),
+                            ),
+                            Text(
+                              streakDaysLabelKey.tr(),
+                              style: TextStyle(
+                                fontSize: s.sp(13),
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey[700],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: s.h(12)),
+                      Text(
+                        statusKey.tr(),
+                        style: TextStyle(
+                          fontSize: s.sp(14),
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey[800],
+                        ),
+                      ),
+                      SizedBox(height: s.h(6)),
+                      Text(
+                        'streak.description'.tr(),
+                        style: TextStyle(
+                          fontSize: s.sp(13),
+                          height: 1.35,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                      SizedBox(height: s.h(12)),
+                      AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 220),
+                        child:
+                            dailyQuestionText == null
+                                ? SizedBox(
+                                  key: const ValueKey('show_daily_question_btn'),
+                                  width: double.infinity,
+                                  child: OutlinedButton(
+                                    onPressed:
+                                        isLoadingDailyQuestion
+                                            ? null
+                                            : () async {
+                                              setDialogState(
+                                                () => isLoadingDailyQuestion = true,
+                                              );
+                                              final questionText =
+                                                  await _loadDailyQuestionOfTheDay();
+                                              if (!mounted) return;
+                                              if (questionText != null &&
+                                                  !dialogAnsweredToday) {
+                                                final updatedStatus =
+                                                    await DailyStreakService.instance
+                                                        .registerDailyAnswer();
+                                                if (!mounted) return;
+                                                setState(
+                                                  () => _streakStatus = updatedStatus,
+                                                );
+                                                dialogAnsweredToday =
+                                                    updatedStatus.hasAnsweredToday;
+                                                statusKey =
+                                                    'streak.status_completed_today';
+                                              }
+                                              if (questionText != null) {
+                                                await DailyStreakService.instance
+                                                    .saveShownDailyQuestionForToday(
+                                                      questionText,
+                                                    );
+                                              }
+                                              setDialogState(() {
+                                                isLoadingDailyQuestion = false;
+                                                dailyQuestionText =
+                                                    questionText ??
+                                                    'streak.daily_question_unavailable'
+                                                        .tr();
+                                              });
+                                            },
+                                    style: OutlinedButton.styleFrom(
+                                      side: BorderSide(color: Colors.grey[300]!),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                          s.r(12),
+                                        ),
+                                      ),
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: s.h(12),
+                                      ),
+                                    ),
+                                    child:
+                                        isLoadingDailyQuestion
+                                            ? SizedBox(
+                                              width: s.r(16),
+                                              height: s.r(16),
+                                              child: const CircularProgressIndicator(
+                                                strokeWidth: 2.2,
+                                                color: Color(0xFF7FC4B3),
+                                              ),
+                                            )
+                                            : Text(
+                                              'streak.show_daily_question'.tr(),
+                                              style: TextStyle(
+                                                fontSize: s.sp(14),
+                                                fontWeight: FontWeight.w600,
+                                                color: Colors.grey[700],
+                                              ),
+                                            ),
+                                  ),
+                                )
+                                : Container(
+                                  key: const ValueKey('daily_question_card'),
+                                  width: double.infinity,
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: s.w(12),
+                                    vertical: s.h(12),
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[100],
+                                    borderRadius: BorderRadius.circular(s.r(12)),
+                                    border: Border.all(color: Colors.grey[300]!),
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'streak.daily_question_title'.tr(),
+                                        style: TextStyle(
+                                          fontSize: s.sp(12),
+                                          fontWeight: FontWeight.w700,
+                                          color: Colors.grey[600],
+                                        ),
+                                      ),
+                                      SizedBox(height: s.h(6)),
+                                      Text(
+                                        dailyQuestionText!,
+                                        style: TextStyle(
+                                          fontSize: s.sp(14),
+                                          fontWeight: FontWeight.w600,
+                                          height: 1.35,
+                                          color: Colors.grey[800],
+                                        ),
+                                      ),
+                                      SizedBox(height: s.h(8)),
+                                      Text(
+                                        'streak.daily_question_hint'.tr(),
+                                        style: TextStyle(
+                                          fontSize: s.sp(12.5),
+                                          height: 1.35,
+                                          color: Colors.grey[600],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                      ),
+                    ],
                   ),
-                ),
-                SizedBox(height: s.h(6)),
-                Text(
-                  'streak.description'.tr(),
-                  style: TextStyle(
-                    fontSize: s.sp(13),
-                    height: 1.35,
-                    color: Colors.grey[600],
-                  ),
-                ),
-              ],
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(dialogContext).pop(),
-                child: Text(
-                  'streak.close'.tr(),
-                  style: TextStyle(
-                    fontSize: s.sp(14),
-                    color: Colors.grey[600],
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-              if (!answeredToday)
-                ElevatedButton(
-                  onPressed: () async {
-                    Navigator.of(dialogContext).pop();
-                    await _openGameSettings();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFB2E0D8),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(s.r(14)),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(dialogContext).pop(),
+                      child: Text(
+                        'streak.close'.tr(),
+                        style: TextStyle(
+                          fontSize: s.sp(14),
+                          color: Colors.grey[600],
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ),
-                    elevation: 2,
-                  ),
-                  child: Text(
-                    'streak.answer_today'.tr(),
-                    style: TextStyle(
-                      fontSize: s.sp(14),
-                      color: Colors.grey[800],
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  ],
                 ),
-            ],
           ),
     );
+  }
+
+  Future<String?> _loadDailyQuestionOfTheDay() async {
+    final question = await QuestionsData.getDailyQuestionForDate(
+      localeCode: context.locale.languageCode,
+    );
+    if (question == null) {
+      return null;
+    }
+
+    return question.text;
   }
 
   Widget _buildLanguageTile({

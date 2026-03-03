@@ -70,12 +70,18 @@
   },
   "streak": {
     "title": "Daily Streak",
+    "day_label_singular": "day in a row",
     "days_label": "days in a row",
-    "status_completed_today": "Great, today is already counted.",
-    "status_ready_today": "You can extend your streak today.",
-    "description": "One answer per day helps keep a healthy habit of daily conversations.",
+    "status_completed_today": "Today's question is already behind you.",
+    "status_start_today": "Start your streak of conversations today.",
+    "status_ready_today": "You can continue your streak today.",
+    "description": "One answer a day helps keep the rhythm of conversations going.",
     "close": "Close",
-    "answer_today": "Answer today"
+    "answer_today": "Answer today",
+    "show_daily_question": "See today's question",
+    "daily_question_title": "Question of the day",
+    "daily_question_unavailable": "Today's question is temporarily unavailable.",
+    "daily_question_hint": "You can answer quietly on your own or talk it through with someone close to you."
   },
   "categories": {
     "chill": "Chill",

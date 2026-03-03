@@ -70,12 +70,18 @@
   },
   "streak": {
     "title": "Racha diaria",
+    "day_label_singular": "día seguido",
     "days_label": "días seguidos",
     "status_completed_today": "Genial, hoy ya cuenta.",
+    "status_start_today": "Empieza hoy tu racha de conversaciones.",
     "status_ready_today": "Hoy puedes extender tu racha.",
     "description": "Una respuesta al día ayuda a mantener un hábito sano de conversaciones diarias.",
     "close": "Cerrar",
-    "answer_today": "Responder hoy"
+    "answer_today": "Responder hoy",
+    "show_daily_question": "Mostrar pregunta diaria",
+    "daily_question_title": "Pregunta diaria",
+    "daily_question_unavailable": "La pregunta diaria no está disponible temporalmente.",
+    "daily_question_hint": "Puedes responder en silencio por tu cuenta o hablarlo con alguien cercano. Lo más importante es la conversación."
   },
   "categories": {
     "chill": "Relax",

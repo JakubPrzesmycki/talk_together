@@ -101,6 +101,23 @@
         "option1": "Mądrość",
         "option2": "Bogactwo"
       }
+    ],
+    "daily": [
+      {
+        "text": "Co dzisiaj poprawiło Ci humor?",
+        "option1": "Mała rzecz",
+        "option2": "Duży moment"
+      },
+      {
+        "text": "Jaki temat chcesz dziś poruszyć z bliską osobą?",
+        "option1": "Lekki",
+        "option2": "Głębszy"
+      },
+      {
+        "text": "Co dziś bardziej wybierasz?",
+        "option1": "Słuchać",
+        "option2": "Opowiadać"
+      }
     ]
   }
 }

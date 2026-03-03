@@ -14,6 +14,7 @@ class QuestionsData {
     'spicy',
     'wild',
     'deep',
+    'daily',
   };
 
   static final Map<String, Map<String, List<Question>>> _cache = {};
@@ -37,6 +38,22 @@ class QuestionsData {
     }
 
     return fallbackData[_fallbackCategoryId] ?? const [];
+  }
+
+  static Future<Question?> getDailyQuestionForDate({
+    required String localeCode,
+    DateTime? now,
+  }) async {
+    final dailyQuestions = await getQuestionsByCategory(
+      categoryName: 'daily',
+      localeCode: localeCode,
+    );
+    if (dailyQuestions.isEmpty) return null;
+
+    final localNow = (now ?? DateTime.now()).toLocal();
+    final daySeed = localNow.year * 1000 + localNow.month * 50 + localNow.day;
+    final index = daySeed % dailyQuestions.length;
+    return dailyQuestions[index];
   }
 
   static Future<Map<String, List<Question>>> _loadQuestionsForLocale(

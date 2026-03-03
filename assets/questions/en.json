@@ -101,6 +101,23 @@
         "option1": "Wisdom",
         "option2": "Wealth"
       }
+    ],
+    "daily": [
+      {
+        "text": "What lifted your mood today?",
+        "option1": "A small thing",
+        "option2": "A big moment"
+      },
+      {
+        "text": "What topic do you want to bring to someone close today?",
+        "option1": "Light",
+        "option2": "Deeper"
+      },
+      {
+        "text": "What do you need more today?",
+        "option1": "To listen",
+        "option2": "To share"
+      }
     ]
   }
 }

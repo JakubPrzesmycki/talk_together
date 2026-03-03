@@ -8,7 +8,6 @@ import '../data/questions_data.dart';
 import 'category_selection_screen.dart';
 import 'session_summary_screen.dart';
 import '../utils/app_scale.dart';
-import '../services/daily_streak_service.dart';
 
 class QuestionWithCategory {
   final Question question;
@@ -318,13 +317,8 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
         });
 
         _startTimer();
-        unawaited(_registerDailyStreakProgress());
       }
     });
-  }
-
-  Future<void> _registerDailyStreakProgress() async {
-    await DailyStreakService.instance.registerDailyAnswer();
   }
 
   void _startTimer() {

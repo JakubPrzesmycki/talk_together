@@ -73,5 +73,33 @@ void main() {
       expect(restarted.streakDays, 1);
       expect(restarted.hasAnsweredToday, isTrue);
     });
+
+    test('shown daily question persists through the same day', () async {
+      await DailyStreakService.instance.saveShownDailyQuestionForToday(
+        'Sample daily question',
+        now: DateTime(2026, 3, 2, 9, 0),
+      );
+
+      final shown = await DailyStreakService.instance
+          .getShownDailyQuestionTextForToday(
+            now: DateTime(2026, 3, 2, 23, 59),
+          );
+
+      expect(shown, 'Sample daily question');
+    });
+
+    test('shown daily question resets on the next day', () async {
+      await DailyStreakService.instance.saveShownDailyQuestionForToday(
+        'Sample daily question',
+        now: DateTime(2026, 3, 2, 9, 0),
+      );
+
+      final shown = await DailyStreakService.instance
+          .getShownDailyQuestionTextForToday(
+            now: DateTime(2026, 3, 3, 8, 0),
+          );
+
+      expect(shown, isNull);
+    });
   });
 }

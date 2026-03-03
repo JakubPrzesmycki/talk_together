@@ -70,12 +70,18 @@
   },
   "streak": {
     "title": "Série quotidienne",
+    "day_label_singular": "jour d'affilée",
     "days_label": "jours d'affilée",
     "status_completed_today": "Parfait, la réponse d'aujourd'hui est déjà comptée.",
+    "status_start_today": "Commence ta série de conversations aujourd'hui.",
     "status_ready_today": "Aujourd'hui, vous pouvez prolonger votre série.",
     "description": "Une réponse par jour aide à garder une habitude saine de conversations quotidiennes.",
     "close": "Fermer",
-    "answer_today": "Répondre aujourd'hui"
+    "answer_today": "Répondre aujourd'hui",
+    "show_daily_question": "Afficher la question du jour",
+    "daily_question_title": "Question du jour",
+    "daily_question_unavailable": "La question du jour est temporairement indisponible.",
+    "daily_question_hint": "Tu peux répondre seul(e) en silence ou en parler avec un proche. Le plus important, c'est la conversation."
   },
   "categories": {
     "chill": "Détente",

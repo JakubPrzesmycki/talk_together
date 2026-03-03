@@ -70,12 +70,18 @@
   },
   "streak": {
     "title": "Daily Streak",
+    "day_label_singular": "dzień z rzędu",
     "days_label": "dni z rzędu",
-    "status_completed_today": "Super, dzisiejsza odpowiedź już zaliczona.",
-    "status_ready_today": "Dzisiaj możesz przedłużyć swoją serię.",
-    "description": "Jedna odpowiedź dziennie pomaga utrzymać rytm rozmów i budować codzienny nawyk.",
+    "status_completed_today": "Dzisiejsze pytanie już za Tobą.",
+    "status_start_today": "Zacznij swoją serię rozmów już dziś.",
+    "status_ready_today": "Dziś możesz przedłużyć swoją serię.",
+    "description": "Jedna odpowiedź dziennie pomaga utrzymać rytm rozmów i budować codzienną regularność.",
     "close": "Zamknij",
-    "answer_today": "Odpowiedz dziś"
+    "answer_today": "Odpowiedz dziś",
+    "show_daily_question": "Zobacz dzisiejsze pytanie",
+    "daily_question_title": "Pytanie na dziś",
+    "daily_question_unavailable": "Dzienne pytanie jest chwilowo niedostępne.",
+    "daily_question_hint": "Możesz odpowiedzieć sam(a) w ciszy albo porozmawiać z kimś bliskim."
   },
   "categories": {
     "chill": "Na luzie",

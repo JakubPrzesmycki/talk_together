@@ -101,6 +101,23 @@
         "option1": "Sagesse",
         "option2": "Richesse"
       }
+    ],
+    "daily": [
+      {
+        "text": "Qu'est-ce qui a amélioré ton humeur aujourd'hui ?",
+        "option1": "Une petite chose",
+        "option2": "Un grand moment"
+      },
+      {
+        "text": "Quel sujet veux-tu aborder aujourd'hui avec un proche ?",
+        "option1": "Léger",
+        "option2": "Plus profond"
+      },
+      {
+        "text": "De quoi as-tu le plus besoin aujourd'hui ?",
+        "option1": "Écouter",
+        "option2": "Partager"
+      }
     ]
   }
 }

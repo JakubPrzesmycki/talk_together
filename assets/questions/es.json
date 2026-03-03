@@ -101,6 +101,23 @@
         "option1": "Sabiduría",
         "option2": "Riqueza"
       }
+    ],
+    "daily": [
+      {
+        "text": "¿Qué mejoró tu ánimo hoy?",
+        "option1": "Algo pequeño",
+        "option2": "Un gran momento"
+      },
+      {
+        "text": "¿Qué tema quieres hablar hoy con alguien cercano?",
+        "option1": "Ligero",
+        "option2": "Más profundo"
+      },
+      {
+        "text": "¿Qué necesitas más hoy?",
+        "option1": "Escuchar",
+        "option2": "Compartir"
+      }
     ]
   }
 }
