@@ -38,7 +38,11 @@ class ReminderNotificationService {
       tz.setLocalLocation(tz.getLocation(timezoneName));
 
       const android = AndroidInitializationSettings('@mipmap/ic_launcher');
-      const ios = DarwinInitializationSettings();
+      const ios = DarwinInitializationSettings(
+        defaultPresentAlert: true,
+        defaultPresentBadge: true,
+        defaultPresentSound: true,
+      );
       const settings = InitializationSettings(android: android, iOS: ios);
 
       await _notifications.initialize(settings);
@@ -78,29 +82,35 @@ class ReminderNotificationService {
     final permissionsGranted = await _requestPermissions();
     if (!permissionsGranted) return false;
 
-    await _notifications.zonedSchedule(
-      _notificationId,
-      title,
-      body,
-      _nextInstanceOfTime(hour: hour, minute: minute),
-      NotificationDetails(
-        android: AndroidNotificationDetails(
-          _notificationChannelId,
-          _notificationChannelName,
-          channelDescription: _notificationChannelDescription,
-          importance: Importance.defaultImportance,
-          priority: Priority.defaultPriority,
+    try {
+      await _notifications.zonedSchedule(
+        _notificationId,
+        title,
+        body,
+        _nextInstanceOfTime(hour: hour, minute: minute),
+        NotificationDetails(
+          android: AndroidNotificationDetails(
+            _notificationChannelId,
+            _notificationChannelName,
+            channelDescription: _notificationChannelDescription,
+            icon: 'ic_stat_notify',
+            importance: Importance.defaultImportance,
+            priority: Priority.defaultPriority,
+          ),
+          iOS: const DarwinNotificationDetails(),
         ),
-        iOS: const DarwinNotificationDetails(),
-      ),
-      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
-      matchDateTimeComponents: DateTimeComponents.time,
-      payload: _dailyReminderId,
-    );
+        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+        matchDateTimeComponents: DateTimeComponents.time,
+        payload: _dailyReminderId,
+      );
 
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_reminderEnabledKey, true);
-    return true;
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool(_reminderEnabledKey, true);
+      return true;
+    } catch (e) {
+      debugPrint('Failed to enable daily reminder: $e');
+      return false;
+    }
   }
 
   Future<void> disableDailyReminder() async {

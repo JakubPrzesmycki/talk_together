@@ -958,20 +958,41 @@ class _StartScreenState extends State<StartScreen>
                                             setDialogState(
                                               () => isReminderActionLoading = true,
                                             );
-                                            if (reminderEnabled) {
-                                              await ReminderNotificationService
-                                                  .instance
-                                                  .disableDailyReminder();
-                                              reminderEnabled = false;
-                                            } else {
+                                            var enableAttemptFailed = false;
+                                            try {
+                                              if (reminderEnabled) {
+                                                await ReminderNotificationService
+                                                    .instance
+                                                    .disableDailyReminder();
+                                              } else {
+                                                final enabled =
+                                                    await _enableDailyReminder();
+                                                if (!enabled) {
+                                                  enableAttemptFailed = true;
+                                                }
+                                              }
                                               reminderEnabled =
-                                                  await _enableDailyReminder();
+                                                  await ReminderNotificationService
+                                                      .instance
+                                                      .isReminderEnabled();
+                                            } finally {
+                                              if (!context.mounted) return;
+                                              setDialogState(() {
+                                                isReminderActionLoading = false;
+                                                isReminderButtonPressed = false;
+                                              });
                                             }
-                                            if (!context.mounted) return;
-                                            setDialogState(() {
-                                              isReminderActionLoading = false;
-                                              isReminderButtonPressed = false;
-                                            });
+                                            if (enableAttemptFailed &&
+                                                context.mounted) {
+                                              ScaffoldMessenger.of(this.context)
+                                                  .showSnackBar(
+                                                    const SnackBar(
+                                                      content: Text(
+                                                        'Enable notifications for TalkTogether in system settings, then try again.',
+                                                      ),
+                                                    ),
+                                                  );
+                                            }
                                           },
                                   style: OutlinedButton.styleFrom(
                                     side: BorderSide(color: Colors.grey[300]!),
