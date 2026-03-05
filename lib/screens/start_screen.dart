@@ -460,10 +460,11 @@ class _StartScreenState extends State<StartScreen>
             : _streakStatus.streakDays == 0
             ? 'streak.status_start_today'
             : 'streak.status_ready_today';
-    final String streakDaysLabelKey =
-        _streakStatus.streakDays == 1
-            ? 'streak.day_label_singular'
-            : 'streak.days_label';
+    String _resolveStreakDaysLabelKey() {
+      return _streakStatus.streakDays == 1
+          ? 'streak.day_label_singular'
+          : 'streak.days_label';
+    }
     String? dailyQuestionText = await DailyStreakService.instance
         .getShownDailyQuestionTextForToday();
     if (dailyQuestionText != null && !dialogAnsweredToday) {
@@ -535,7 +536,7 @@ class _StartScreenState extends State<StartScreen>
                               ),
                             ),
                             Text(
-                              streakDaysLabelKey.tr(),
+                              _resolveStreakDaysLabelKey().tr(),
                               style: TextStyle(
                                 fontSize: s.sp(13),
                                 fontWeight: FontWeight.w600,
@@ -546,21 +547,27 @@ class _StartScreenState extends State<StartScreen>
                         ),
                       ),
                       SizedBox(height: s.h(12)),
-                      Text(
-                        statusKey.tr(),
-                        style: TextStyle(
-                          fontSize: s.sp(14),
-                          fontWeight: FontWeight.w600,
-                          color: Colors.grey[800],
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: s.w(12)),
+                        child: Text(
+                          statusKey.tr(),
+                          style: TextStyle(
+                            fontSize: s.sp(14),
+                            fontWeight: FontWeight.w600,
+                            color: Colors.grey[800],
+                          ),
                         ),
                       ),
                       SizedBox(height: s.h(6)),
-                      Text(
-                        'streak.description'.tr(),
-                        style: TextStyle(
-                          fontSize: s.sp(13),
-                          height: 1.35,
-                          color: Colors.grey[600],
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: s.w(12)),
+                        child: Text(
+                          'streak.description'.tr(),
+                          style: TextStyle(
+                            fontSize: s.sp(13),
+                            height: 1.35,
+                            color: Colors.grey[600],
+                          ),
                         ),
                       ),
                       SizedBox(height: s.h(12)),
