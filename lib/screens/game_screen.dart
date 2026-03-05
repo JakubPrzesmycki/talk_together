@@ -54,6 +54,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   int? _currentRoundResultIndex;
   int _currentRoundExtensions = 0;
   DateTime? _discussionStartedAt;
+  int? _pressedVotingOption;
 
   late AnimationController _resultsAnimationController;
   late AnimationController _timerAnimationController;
@@ -321,6 +322,14 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     });
   }
 
+  void _setVotingButtonPressed(int? option) {
+    if (_pressedVotingOption == option) return;
+    if (!mounted) return;
+    setState(() {
+      _pressedVotingOption = option;
+    });
+  }
+
   void _startTimer() {
     timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
@@ -383,6 +392,8 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
 
   Future<TimeUpAction> _showContinueDiscussionDialog() async {
     final s = AppScale.of(context);
+    bool isNextPressed = false;
+    bool isNeedMoreTimePressed = false;
     final result = await showGeneralDialog<TimeUpAction>(
       context: context,
       barrierDismissible: false,
@@ -390,115 +401,166 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       barrierColor: Colors.black.withOpacity(0.25),
       transitionDuration: const Duration(milliseconds: 220),
       pageBuilder: (_, __, ___) {
-        return Center(
-          child: Material(
-            color: Colors.transparent,
-            child: ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: s.w(392)),
-              child: Container(
-                margin: EdgeInsets.symmetric(horizontal: s.w(18)),
-                padding: EdgeInsets.fromLTRB(
-                  s.w(22),
-                  s.h(20),
-                  s.w(22),
-                  s.h(16),
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(s.r(20)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.08),
-                      blurRadius: s.r(20),
-                      offset: Offset(0, s.h(6)),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'game.extend_title'.tr(),
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: s.sp(22),
-                        color: Colors.grey[800],
+        return StatefulBuilder(
+          builder:
+              (dialogContext, setDialogState) => Center(
+                child: Material(
+                  color: Colors.transparent,
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: s.w(392)),
+                    child: Container(
+                      margin: EdgeInsets.symmetric(horizontal: s.w(18)),
+                      padding: EdgeInsets.fromLTRB(
+                        s.w(22),
+                        s.h(20),
+                        s.w(22),
+                        s.h(16),
                       ),
-                    ),
-                    SizedBox(height: s.h(10)),
-                    Text(
-                      'game.extend_message'.tr(),
-                      style: TextStyle(
-                        fontSize: s.sp(16),
-                        color: Colors.grey[600],
-                        height: 1.35,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(s.r(20)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.08),
+                            blurRadius: s.r(20),
+                            offset: Offset(0, s.h(6)),
+                          ),
+                        ],
                       ),
-                    ),
-                    SizedBox(height: s.h(18)),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextButton(
-                            onPressed:
-                                () => Navigator.of(
-                                  context,
-                                ).pop(TimeUpAction.nextQuestion),
-                            style: TextButton.styleFrom(
-                              padding: EdgeInsets.symmetric(vertical: s.h(12)),
-                            ),
-                            child: FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: Text(
-                                'buttons.next_short'.tr(),
-                                maxLines: 1,
-                                style: TextStyle(
-                                  fontSize: s.sp(15),
-                                  color: Colors.grey[600],
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'game.extend_title'.tr(),
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: s.sp(22),
+                              color: Colors.grey[800],
                             ),
                           ),
-                        ),
-                        SizedBox(width: s.w(8)),
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed:
-                                () => Navigator.of(
-                                  context,
-                                ).pop(TimeUpAction.needMoreTime),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFFB2E0D8),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(s.r(12)),
-                              ),
-                              padding: EdgeInsets.symmetric(
-                                horizontal: s.w(12),
-                                vertical: s.h(12),
-                              ),
-                            ),
-                            child: FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: Text(
-                                'buttons.need_more_time'.tr(),
-                                maxLines: 1,
-                                style: TextStyle(
-                                  fontSize: s.sp(15),
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey[800],
-                                ),
-                              ),
+                          SizedBox(height: s.h(10)),
+                          Text(
+                            'game.extend_message'.tr(),
+                            style: TextStyle(
+                              fontSize: s.sp(16),
+                              color: Colors.grey[600],
+                              height: 1.35,
                             ),
                           ),
-                        ),
-                      ],
+                          SizedBox(height: s.h(18)),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Listener(
+                                  onPointerDown:
+                                      (_) => setDialogState(
+                                        () => isNextPressed = true,
+                                      ),
+                                  onPointerCancel:
+                                      (_) => setDialogState(
+                                        () => isNextPressed = false,
+                                      ),
+                                  child: AnimatedScale(
+                                    duration: const Duration(milliseconds: 110),
+                                    curve: Curves.easeOutCubic,
+                                    scale: isNextPressed ? 0.97 : 1.0,
+                                    child: TextButton(
+                                      onPressed: () async {
+                                        setDialogState(() => isNextPressed = true);
+                                        await Future.delayed(
+                                          const Duration(milliseconds: 110),
+                                        );
+                                        if (!dialogContext.mounted) return;
+                                        Navigator.of(
+                                          dialogContext,
+                                        ).pop(TimeUpAction.nextQuestion);
+                                      },
+                                      style: TextButton.styleFrom(
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: s.h(12),
+                                        ),
+                                      ),
+                                      child: FittedBox(
+                                        fit: BoxFit.scaleDown,
+                                        child: Text(
+                                          'buttons.next_short'.tr(),
+                                          maxLines: 1,
+                                          style: TextStyle(
+                                            fontSize: s.sp(15),
+                                            color: Colors.grey[600],
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: s.w(8)),
+                              Expanded(
+                                child: Listener(
+                                  onPointerDown:
+                                      (_) => setDialogState(
+                                        () => isNeedMoreTimePressed = true,
+                                      ),
+                                  onPointerCancel:
+                                      (_) => setDialogState(
+                                        () => isNeedMoreTimePressed = false,
+                                      ),
+                                  child: AnimatedScale(
+                                    duration: const Duration(milliseconds: 110),
+                                    curve: Curves.easeOutCubic,
+                                    scale: isNeedMoreTimePressed ? 0.97 : 1.0,
+                                    child: ElevatedButton(
+                                      onPressed: () async {
+                                        setDialogState(
+                                          () => isNeedMoreTimePressed = true,
+                                        );
+                                        await Future.delayed(
+                                          const Duration(milliseconds: 110),
+                                        );
+                                        if (!dialogContext.mounted) return;
+                                        Navigator.of(
+                                          dialogContext,
+                                        ).pop(TimeUpAction.needMoreTime);
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: const Color(0xFFB2E0D8),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            s.r(12),
+                                          ),
+                                        ),
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: s.w(12),
+                                          vertical: s.h(12),
+                                        ),
+                                      ),
+                                      child: FittedBox(
+                                        fit: BoxFit.scaleDown,
+                                        child: Text(
+                                          'buttons.need_more_time'.tr(),
+                                          maxLines: 1,
+                                          style: TextStyle(
+                                            fontSize: s.sp(15),
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.grey[800],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ],
+                  ),
                 ),
               ),
-            ),
-          ),
         );
       },
       transitionBuilder: (context, animation, secondaryAnimation, child) {
@@ -566,10 +628,14 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
 
   Future<bool> _showExitDialog() async {
     final s = AppScale.of(context);
+    bool isCancelPressed = false;
+    bool isExitPressed = false;
     return await showDialog<bool>(
           context: context,
           builder:
-              (context) => AlertDialog(
+              (context) => StatefulBuilder(
+                builder:
+                    (dialogContext, setDialogState) => AlertDialog(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(s.r(20)),
                 ),
@@ -586,39 +652,72 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                   style: TextStyle(fontSize: s.sp(16), color: Colors.grey[600]),
                 ),
                 actions: [
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(false),
-                    child: Text(
-                      'buttons.cancel'.tr(),
-                      style: TextStyle(
-                        fontSize: s.sp(16),
-                        color: Colors.grey[600],
-                        fontWeight: FontWeight.w600,
+                  Listener(
+                    onPointerDown:
+                        (_) => setDialogState(() => isCancelPressed = true),
+                    onPointerCancel:
+                        (_) => setDialogState(() => isCancelPressed = false),
+                    child: AnimatedScale(
+                      duration: const Duration(milliseconds: 110),
+                      curve: Curves.easeOutCubic,
+                      scale: isCancelPressed ? 0.97 : 1.0,
+                      child: TextButton(
+                        onPressed: () async {
+                          setDialogState(() => isCancelPressed = true);
+                          await Future.delayed(const Duration(milliseconds: 110));
+                          if (!dialogContext.mounted) return;
+                          Navigator.of(dialogContext).pop(false);
+                        },
+                        child: Text(
+                          'buttons.cancel'.tr(),
+                          style: TextStyle(
+                            fontSize: s.sp(16),
+                            color: Colors.grey[600],
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                  ElevatedButton(
-                    onPressed: () => Navigator.of(context).pop(true),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFB2E0D8),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(s.r(12)),
-                      ),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: s.w(24),
-                        vertical: s.h(12),
-                      ),
-                    ),
-                    child: Text(
-                      'buttons.exit'.tr(),
-                      style: TextStyle(
-                        fontSize: s.sp(16),
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey[800],
+                  Listener(
+                    onPointerDown:
+                        (_) => setDialogState(() => isExitPressed = true),
+                    onPointerCancel:
+                        (_) => setDialogState(() => isExitPressed = false),
+                    child: AnimatedScale(
+                      duration: const Duration(milliseconds: 110),
+                      curve: Curves.easeOutCubic,
+                      scale: isExitPressed ? 0.97 : 1.0,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          setDialogState(() => isExitPressed = true);
+                          await Future.delayed(const Duration(milliseconds: 110));
+                          if (!dialogContext.mounted) return;
+                          Navigator.of(dialogContext).pop(true);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFB2E0D8),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(s.r(12)),
+                          ),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: s.w(24),
+                            vertical: s.h(12),
+                          ),
+                        ),
+                        child: Text(
+                          'buttons.exit'.tr(),
+                          style: TextStyle(
+                            fontSize: s.sp(16),
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey[800],
+                          ),
+                        ),
                       ),
                     ),
                   ),
                 ],
+              ),
               ),
         ) ??
         false;
@@ -1115,61 +1214,84 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     final s = AppScale.of(context);
     final percentage = _getPercentage(votes);
     final isVotingComplete = votingComplete;
+    final isPressed = _pressedVotingOption == option;
 
     return GestureDetector(
-      onTap: () => _vote(option),
-      child: Container(
-        height: isCompact ? s.h(122) : s.h(140),
-        decoration: BoxDecoration(
-          color: isVotingComplete ? color.withOpacity(0.6) : color,
-          borderRadius: BorderRadius.circular(s.r(20)),
-          boxShadow: [
-            BoxShadow(
-              color: color.withOpacity(0.3),
-              blurRadius: s.r(10),
-              offset: Offset(0, s.h(4)),
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: isCompact ? s.sp(42) : s.sp(48),
-                fontWeight: FontWeight.bold,
-                color: Colors.grey[800],
-              ),
-            ),
-            if (isVotingComplete) ...[
-              FadeTransition(
-                opacity: _resultsOpacityAnimation,
-                child: Column(
-                  children: [
-                    SizedBox(height: isCompact ? s.h(4) : s.h(8)),
-                    Text(
-                      '${percentage.toStringAsFixed(0)}%',
-                      style: TextStyle(
-                        fontSize: isCompact ? s.sp(20) : s.sp(24),
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey[800],
-                      ),
-                    ),
-                    Text(
-                      votes == 1
-                          ? 'game.vote_singular'.tr(args: ['$votes'])
-                          : 'game.vote_plural'.tr(args: ['$votes']),
-                      style: TextStyle(
-                        fontSize: isCompact ? s.sp(11) : s.sp(14),
-                        color: Colors.grey[700],
-                      ),
-                    ),
-                  ],
-                ),
+      onTapDown: (_) {
+        if (!isVotingComplete) {
+          _setVotingButtonPressed(option);
+        }
+      },
+      onTapCancel: () => _setVotingButtonPressed(null),
+      onTap: () {
+        if (!isVotingComplete) {
+          _setVotingButtonPressed(option);
+        }
+        _vote(option);
+        Future.delayed(const Duration(milliseconds: 130), () {
+          if (!mounted || _pressedVotingOption != option) return;
+          _setVotingButtonPressed(null);
+        });
+      },
+      child: AnimatedScale(
+        duration: const Duration(milliseconds: 120),
+        curve: Curves.easeOutCubic,
+        scale: isPressed ? 0.965 : 1.0,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 120),
+          curve: Curves.easeOutCubic,
+          height: isCompact ? s.h(122) : s.h(140),
+          decoration: BoxDecoration(
+            color: isVotingComplete ? color.withOpacity(0.6) : color,
+            borderRadius: BorderRadius.circular(s.r(20)),
+            boxShadow: [
+              BoxShadow(
+                color: color.withOpacity(isPressed ? 0.22 : 0.3),
+                blurRadius: s.r(isPressed ? 7 : 10),
+                offset: Offset(0, s.h(isPressed ? 2.5 : 4)),
               ),
             ],
-          ],
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: isCompact ? s.sp(42) : s.sp(48),
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey[800],
+                ),
+              ),
+              if (isVotingComplete) ...[
+                FadeTransition(
+                  opacity: _resultsOpacityAnimation,
+                  child: Column(
+                    children: [
+                      SizedBox(height: isCompact ? s.h(4) : s.h(8)),
+                      Text(
+                        '${percentage.toStringAsFixed(0)}%',
+                        style: TextStyle(
+                          fontSize: isCompact ? s.sp(20) : s.sp(24),
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey[800],
+                        ),
+                      ),
+                      Text(
+                        votes == 1
+                            ? 'game.vote_singular'.tr(args: ['$votes'])
+                            : 'game.vote_plural'.tr(args: ['$votes']),
+                        style: TextStyle(
+                          fontSize: isCompact ? s.sp(11) : s.sp(14),
+                          color: Colors.grey[700],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ],
+          ),
         ),
       ),
     );

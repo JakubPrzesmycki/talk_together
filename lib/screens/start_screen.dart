@@ -20,6 +20,7 @@ class _StartScreenState extends State<StartScreen>
   late Animation<double> _pulseAnimation;
   bool _isLanguageHandlePressed = false;
   bool _isStreakHandlePressed = false;
+  bool _isStartButtonPressed = false;
   DailyStreakStatus _streakStatus = const DailyStreakStatus(
     streakDays: 0,
     hasAnsweredToday: false,
@@ -117,43 +118,66 @@ class _StartScreenState extends State<StartScreen>
                   ScaleTransition(
                     scale: _pulseAnimation,
                     child: GestureDetector(
-                      onTap: _openGameSettings,
-                      child: Container(
-                        width: s.w(160),
-                        height: s.w(160),
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              Color(0xFFD4F5ED), // Jaśniejszy miętowy
-                              Color(0xFF7FC4B3), // Ciemniejszy miętowy
+                      onTapDown: (_) => _setStartButtonPressed(true),
+                      onTapCancel: () => _setStartButtonPressed(false),
+                      onTap: () {
+                        _setStartButtonPressed(true);
+                        _openGameSettings();
+                        Future.delayed(const Duration(milliseconds: 120), () {
+                          if (!mounted) return;
+                          _setStartButtonPressed(false);
+                        });
+                      },
+                      child: AnimatedScale(
+                        duration: const Duration(milliseconds: 120),
+                        curve: Curves.easeOutCubic,
+                        scale: _isStartButtonPressed ? 0.97 : 1.0,
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 120),
+                          curve: Curves.easeOutCubic,
+                          width: s.w(160),
+                          height: s.w(160),
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                Color(0xFFD4F5ED), // Jaśniejszy miętowy
+                                Color(0xFF7FC4B3), // Ciemniejszy miętowy
+                              ],
+                            ),
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(
+                                  0xFFB2E0D8,
+                                ).withOpacity(_isStartButtonPressed ? 0.45 : 0.6),
+                                blurRadius: s.r(_isStartButtonPressed ? 22 : 30),
+                                spreadRadius: s.r(_isStartButtonPressed ? 3 : 5),
+                                offset: Offset(
+                                  0,
+                                  s.h(_isStartButtonPressed ? 5 : 8),
+                                ),
+                              ),
+                              BoxShadow(
+                                color: const Color(
+                                  0xFFB2E0D8,
+                                ).withOpacity(_isStartButtonPressed ? 0.2 : 0.3),
+                                blurRadius: s.r(_isStartButtonPressed ? 36 : 50),
+                                spreadRadius: s.r(_isStartButtonPressed ? 6 : 10),
+                                offset: const Offset(0, 0),
+                              ),
                             ],
                           ),
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: const Color(0xFFB2E0D8).withOpacity(0.6),
-                              blurRadius: s.r(30),
-                              spreadRadius: s.r(5),
-                              offset: Offset(0, s.h(8)),
-                            ),
-                            BoxShadow(
-                              color: const Color(0xFFB2E0D8).withOpacity(0.3),
-                              blurRadius: s.r(50),
-                              spreadRadius: s.r(10),
-                              offset: const Offset(0, 0),
-                            ),
-                          ],
-                        ),
-                        child: Center(
-                          child: Text(
-                            'buttons.start'.tr(),
-                            style: TextStyle(
-                              fontSize: s.sp(24),
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey[800],
-                              letterSpacing: s.r(2),
+                          child: Center(
+                            child: Text(
+                              'buttons.start'.tr(),
+                              style: TextStyle(
+                                fontSize: s.sp(24),
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey[800],
+                                letterSpacing: s.r(2),
+                              ),
                             ),
                           ),
                         ),
@@ -312,6 +336,8 @@ class _StartScreenState extends State<StartScreen>
   Future<void> _showLanguageDialog() async {
     final s = AppScale.of(context);
     Locale selectedLocale = context.locale;
+    bool isCancelPressed = false;
+    bool isApplyPressed = false;
     final Locale? changed = await showDialog<Locale>(
       context: context,
       builder:
@@ -362,37 +388,68 @@ class _StartScreenState extends State<StartScreen>
                   ],
                 ),
                 actions: [
-                  TextButton(
-                    onPressed: () => Navigator.of(dialogContext).pop(),
-                    child: Text(
-                      'buttons.cancel'.tr(),
-                      style: TextStyle(
-                        fontSize: s.sp(14),
-                        color: Colors.grey[600],
-                        fontWeight: FontWeight.w600,
+                  Listener(
+                    onPointerDown: (_) => setDialogState(() => isCancelPressed = true),
+                    onPointerCancel:
+                        (_) => setDialogState(() => isCancelPressed = false),
+                    child: AnimatedScale(
+                      duration: const Duration(milliseconds: 110),
+                      curve: Curves.easeOutCubic,
+                      scale: isCancelPressed ? 0.97 : 1.0,
+                      child: TextButton(
+                        onPressed: () async {
+                          setDialogState(() => isCancelPressed = true);
+                          await Future.delayed(const Duration(milliseconds: 110));
+                          if (!dialogContext.mounted) return;
+                          Navigator.of(dialogContext).pop();
+                        },
+                        child: Text(
+                          'buttons.cancel'.tr(),
+                          style: TextStyle(
+                            fontSize: s.sp(14),
+                            color: Colors.grey[600],
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                  ElevatedButton(
-                    onPressed:
-                        hasChanged
-                            ? () =>
-                                Navigator.of(dialogContext).pop(selectedLocale)
-                            : null,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFB2E0D8),
-                      disabledBackgroundColor: Colors.grey[300],
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(s.r(14)),
-                      ),
-                      elevation: hasChanged ? 3 : 0,
-                    ),
-                    child: Text(
-                      'language.apply'.tr(),
-                      style: TextStyle(
-                        fontSize: s.sp(14),
-                        color: Colors.grey[800],
-                        fontWeight: FontWeight.bold,
+                  Listener(
+                    onPointerDown: (_) => setDialogState(() => isApplyPressed = true),
+                    onPointerCancel:
+                        (_) => setDialogState(() => isApplyPressed = false),
+                    child: AnimatedScale(
+                      duration: const Duration(milliseconds: 110),
+                      curve: Curves.easeOutCubic,
+                      scale: isApplyPressed ? 0.97 : 1.0,
+                      child: ElevatedButton(
+                        onPressed:
+                            hasChanged
+                                ? () async {
+                                  setDialogState(() => isApplyPressed = true);
+                                  await Future.delayed(
+                                    const Duration(milliseconds: 110),
+                                  );
+                                  if (!dialogContext.mounted) return;
+                                  Navigator.of(dialogContext).pop(selectedLocale);
+                                }
+                                : null,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFB2E0D8),
+                          disabledBackgroundColor: Colors.grey[300],
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(s.r(14)),
+                          ),
+                          elevation: hasChanged ? 3 : 0,
+                        ),
+                        child: Text(
+                          'language.apply'.tr(),
+                          style: TextStyle(
+                            fontSize: s.sp(14),
+                            color: Colors.grey[800],
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -449,6 +506,11 @@ class _StartScreenState extends State<StartScreen>
     await _loadStreakStatus();
   }
 
+  void _setStartButtonPressed(bool isPressed) {
+    if (_isStartButtonPressed == isPressed || !mounted) return;
+    setState(() => _isStartButtonPressed = isPressed);
+  }
+
   Future<void> _showStreakDialog() async {
     await _loadStreakStatus();
     if (!mounted) return;
@@ -476,6 +538,8 @@ class _StartScreenState extends State<StartScreen>
       statusKey = 'streak.status_completed_today';
     }
     bool isLoadingDailyQuestion = false;
+    bool isShowDailyQuestionPressed = false;
+    bool isClosePressed = false;
     if (!mounted) return;
 
     await showDialog<void>(
@@ -580,7 +644,25 @@ class _StartScreenState extends State<StartScreen>
                                 ? SizedBox(
                                   key: const ValueKey('show_daily_question_btn'),
                                   width: double.infinity,
-                                  child: OutlinedButton(
+                                  child: Listener(
+                                    onPointerDown:
+                                        (_) => setDialogState(
+                                          () => isShowDailyQuestionPressed = true,
+                                        ),
+                                    onPointerUp:
+                                        (_) => setDialogState(
+                                          () => isShowDailyQuestionPressed = false,
+                                        ),
+                                    onPointerCancel:
+                                        (_) => setDialogState(
+                                          () => isShowDailyQuestionPressed = false,
+                                        ),
+                                    child: AnimatedScale(
+                                      duration: const Duration(milliseconds: 110),
+                                      curve: Curves.easeOutCubic,
+                                      scale:
+                                          isShowDailyQuestionPressed ? 0.97 : 1.0,
+                                      child: OutlinedButton(
                                     onPressed:
                                         isLoadingDailyQuestion
                                             ? null
@@ -655,6 +737,8 @@ class _StartScreenState extends State<StartScreen>
                                                 color: Colors.grey[700],
                                               ),
                                             ),
+                                      ),
+                                    ),
                                   ),
                                 )
                                 : Container(
@@ -706,14 +790,32 @@ class _StartScreenState extends State<StartScreen>
                     ],
                   ),
                   actions: [
-                    TextButton(
-                      onPressed: () => Navigator.of(dialogContext).pop(),
-                      child: Text(
-                        'streak.close'.tr(),
-                        style: TextStyle(
-                          fontSize: s.sp(14),
-                          color: Colors.grey[600],
-                          fontWeight: FontWeight.w600,
+                    Listener(
+                      onPointerDown:
+                          (_) => setDialogState(() => isClosePressed = true),
+                      onPointerCancel:
+                          (_) => setDialogState(() => isClosePressed = false),
+                      child: AnimatedScale(
+                        duration: const Duration(milliseconds: 110),
+                        curve: Curves.easeOutCubic,
+                        scale: isClosePressed ? 0.97 : 1.0,
+                        child: TextButton(
+                          onPressed: () async {
+                            setDialogState(() => isClosePressed = true);
+                            await Future.delayed(
+                              const Duration(milliseconds: 110),
+                            );
+                            if (!dialogContext.mounted) return;
+                            Navigator.of(dialogContext).pop();
+                          },
+                          child: Text(
+                            'streak.close'.tr(),
+                            style: TextStyle(
+                              fontSize: s.sp(14),
+                              color: Colors.grey[600],
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                         ),
                       ),
                     ),
