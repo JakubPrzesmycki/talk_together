@@ -199,7 +199,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
     final s = AppScale.of(context);
     final isSelected = selectedCategories.contains(title);
     
-    Color _darkenColor(Color color, [double amount = 0.2]) {
+    Color darkenColor(Color color, [double amount = 0.2]) {
       final hsl = HSLColor.fromColor(color);
       final lightness = (hsl.lightness - amount).clamp(0.0, 1.0);
       return hsl.withLightness(lightness).toColor();
@@ -212,7 +212,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
           color: color,
           borderRadius: BorderRadius.circular(s.r(24)),
           border: isSelected
-              ? Border.all(color: _darkenColor(color), width: s.r(4))
+              ? Border.all(color: darkenColor(color), width: s.r(4))
               : null,
           boxShadow: [
             BoxShadow(

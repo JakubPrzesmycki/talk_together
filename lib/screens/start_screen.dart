@@ -404,6 +404,7 @@ class _StartScreenState extends State<StartScreen>
 
     if (changed != null && mounted) {
       await context.setLocale(changed);
+      if (!mounted) return;
       setState(() {});
     }
   }
@@ -460,7 +461,7 @@ class _StartScreenState extends State<StartScreen>
             : _streakStatus.streakDays == 0
             ? 'streak.status_start_today'
             : 'streak.status_ready_today';
-    String _resolveStreakDaysLabelKey() {
+    String resolveStreakDaysLabelKey() {
       return _streakStatus.streakDays == 1
           ? 'streak.day_label_singular'
           : 'streak.days_label';
@@ -475,6 +476,7 @@ class _StartScreenState extends State<StartScreen>
       statusKey = 'streak.status_completed_today';
     }
     bool isLoadingDailyQuestion = false;
+    if (!mounted) return;
 
     await showDialog<void>(
       context: context,
@@ -536,7 +538,7 @@ class _StartScreenState extends State<StartScreen>
                               ),
                             ),
                             Text(
-                              _resolveStreakDaysLabelKey().tr(),
+                              resolveStreakDaysLabelKey().tr(),
                               style: TextStyle(
                                 fontSize: s.sp(13),
                                 fontWeight: FontWeight.w600,
@@ -583,18 +585,24 @@ class _StartScreenState extends State<StartScreen>
                                         isLoadingDailyQuestion
                                             ? null
                                             : () async {
+                                              if (!context.mounted) return;
                                               setDialogState(
                                                 () => isLoadingDailyQuestion = true,
                                               );
                                               final questionText =
                                                   await _loadDailyQuestionOfTheDay();
-                                              if (!mounted) return;
+                                              if (!mounted || !context.mounted) {
+                                                return;
+                                              }
                                               if (questionText != null &&
                                                   !dialogAnsweredToday) {
                                                 final updatedStatus =
                                                     await DailyStreakService.instance
                                                         .registerDailyAnswer();
-                                                if (!mounted) return;
+                                                if (!mounted ||
+                                                    !context.mounted) {
+                                                  return;
+                                                }
                                                 setState(
                                                   () => _streakStatus = updatedStatus,
                                                 );
@@ -609,6 +617,7 @@ class _StartScreenState extends State<StartScreen>
                                                       questionText,
                                                     );
                                               }
+                                              if (!context.mounted) return;
                                               setDialogState(() {
                                                 isLoadingDailyQuestion = false;
                                                 dailyQuestionText =
