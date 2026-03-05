@@ -77,11 +77,13 @@ void main() {
     test('shown daily question persists through the same day', () async {
       await DailyStreakService.instance.saveShownDailyQuestionForToday(
         'Sample daily question',
+        localeCode: 'en',
         now: DateTime(2026, 3, 2, 9, 0),
       );
 
       final shown = await DailyStreakService.instance
           .getShownDailyQuestionTextForToday(
+            localeCode: 'en',
             now: DateTime(2026, 3, 2, 23, 59),
           );
 
@@ -91,15 +93,33 @@ void main() {
     test('shown daily question resets on the next day', () async {
       await DailyStreakService.instance.saveShownDailyQuestionForToday(
         'Sample daily question',
+        localeCode: 'en',
         now: DateTime(2026, 3, 2, 9, 0),
       );
 
       final shown = await DailyStreakService.instance
           .getShownDailyQuestionTextForToday(
+            localeCode: 'en',
             now: DateTime(2026, 3, 3, 8, 0),
           );
 
       expect(shown, isNull);
+    });
+
+    test('shown daily question is locale-specific for the same day', () async {
+      await DailyStreakService.instance.saveShownDailyQuestionForToday(
+        'Pytanie po polsku',
+        localeCode: 'pl',
+        now: DateTime(2026, 3, 2, 9, 0),
+      );
+
+      final shownForEn = await DailyStreakService.instance
+          .getShownDailyQuestionTextForToday(
+            localeCode: 'en',
+            now: DateTime(2026, 3, 2, 10, 0),
+          );
+
+      expect(shownForEn, isNull);
     });
   });
 }

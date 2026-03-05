@@ -83,6 +83,18 @@
     "daily_question_unavailable": "Dzienne pytanie jest chwilowo niedostępne.",
     "daily_question_hint": "Możesz odpowiedzieć sam(a) w ciszy albo porozmawiać z kimś bliskim."
   },
+  "notifications": {
+    "prompt_title": "Codzienne przypomnienie?",
+    "prompt_description": "Możemy codziennie o {} przypomnieć Ci o pytaniu dnia.",
+    "prompt_not_now": "Nie teraz",
+    "prompt_enable": "Włącz",
+    "daily_reminder_title": "Pytanie dnia czeka",
+    "daily_reminder_body": "Otwórz TalkTogether i zacznij rozmowę.",
+    "reminder_enabled_at": "Przypomnienie codziennie o {}",
+    "reminder_disabled": "Przypomnienie jest wyłączone",
+    "turn_on": "Włącz",
+    "turn_off": "Wyłącz"
+  },
   "categories": {
     "chill": "Na luzie",
     "family": "Rodzinne",

@@ -83,6 +83,18 @@
     "daily_question_unavailable": "Today's question is temporarily unavailable.",
     "daily_question_hint": "You can answer quietly on your own or talk it through with someone close to you."
   },
+  "notifications": {
+    "prompt_title": "Daily reminder?",
+    "prompt_description": "We can remind you every day at {} about the question of the day.",
+    "prompt_not_now": "Not now",
+    "prompt_enable": "Enable",
+    "daily_reminder_title": "Question of the day is waiting",
+    "daily_reminder_body": "Open TalkTogether and start a conversation.",
+    "reminder_enabled_at": "Reminder every day at {}",
+    "reminder_disabled": "Reminder is off",
+    "turn_on": "Turn on",
+    "turn_off": "Turn off"
+  },
   "categories": {
     "chill": "Chill",
     "family": "Family",

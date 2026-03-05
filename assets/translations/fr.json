@@ -83,6 +83,18 @@
     "daily_question_unavailable": "La question du jour est temporairement indisponible.",
     "daily_question_hint": "Tu peux répondre seul(e) en silence ou en parler avec un proche. Le plus important, c'est la conversation."
   },
+  "notifications": {
+    "prompt_title": "Rappel quotidien ?",
+    "prompt_description": "Nous pouvons te rappeler chaque jour à {} la question du jour.",
+    "prompt_not_now": "Pas maintenant",
+    "prompt_enable": "Activer",
+    "daily_reminder_title": "La question du jour t'attend",
+    "daily_reminder_body": "Ouvre TalkTogether et lance une conversation.",
+    "reminder_enabled_at": "Rappel tous les jours à {}",
+    "reminder_disabled": "Le rappel est désactivé",
+    "turn_on": "Activer",
+    "turn_off": "Désactiver"
+  },
   "categories": {
     "chill": "Détente",
     "family": "Famille",

@@ -13,6 +13,8 @@ class DailyStreakService {
       'daily_streak.shown_daily_question_date';
   static const String _shownDailyQuestionTextKey =
       'daily_streak.shown_daily_question_text';
+  static const String _shownDailyQuestionLocaleKey =
+      'daily_streak.shown_daily_question_locale';
 
   Future<DailyStreakStatus> getStatus({DateTime? now}) async {
     final prefs = await SharedPreferences.getInstance();
@@ -73,26 +75,35 @@ class DailyStreakService {
     );
   }
 
-  Future<String?> getShownDailyQuestionTextForToday({DateTime? now}) async {
+  Future<String?> getShownDailyQuestionTextForToday({
+    required String localeCode,
+    DateTime? now,
+  }) async {
     final prefs = await SharedPreferences.getInstance();
     final DateTime today = _normalizeToLocalDate(now ?? DateTime.now());
     final String todayKey = _formatDate(today);
     final String? savedDate = prefs.getString(_shownDailyQuestionDateKey);
     final String? savedText = prefs.getString(_shownDailyQuestionTextKey);
+    final String? savedLocale = prefs.getString(_shownDailyQuestionLocaleKey);
 
-    if (savedDate == todayKey && savedText != null && savedText.isNotEmpty) {
+    final bool isCurrentDayAndLocale =
+        savedDate == todayKey && savedLocale == localeCode;
+
+    if (isCurrentDayAndLocale && savedText != null && savedText.isNotEmpty) {
       return savedText;
     }
 
-    if (savedDate != null && savedDate != todayKey) {
+    if (savedDate != null) {
       await prefs.remove(_shownDailyQuestionDateKey);
       await prefs.remove(_shownDailyQuestionTextKey);
+      await prefs.remove(_shownDailyQuestionLocaleKey);
     }
     return null;
   }
 
   Future<void> saveShownDailyQuestionForToday(
     String questionText, {
+    required String localeCode,
     DateTime? now,
   }) async {
     if (questionText.trim().isEmpty) return;
@@ -100,6 +111,7 @@ class DailyStreakService {
     final DateTime today = _normalizeToLocalDate(now ?? DateTime.now());
     await prefs.setString(_shownDailyQuestionDateKey, _formatDate(today));
     await prefs.setString(_shownDailyQuestionTextKey, questionText.trim());
+    await prefs.setString(_shownDailyQuestionLocaleKey, localeCode);
   }
 
   DateTime _normalizeToLocalDate(DateTime dateTime) {

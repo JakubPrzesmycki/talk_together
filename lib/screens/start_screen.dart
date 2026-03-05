@@ -5,6 +5,7 @@ import '../data/questions_data.dart';
 import 'game_settings_screen.dart';
 import '../models/daily_streak_status.dart';
 import '../services/daily_streak_service.dart';
+import '../services/reminder_notification_service.dart';
 import '../utils/app_scale.dart';
 
 class StartScreen extends StatefulWidget {
@@ -41,6 +42,9 @@ class _StartScreenState extends State<StartScreen>
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
     _loadStreakStatus();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _maybeAskForReminderOnFirstLaunch();
+    });
   }
 
   @override
@@ -511,6 +515,82 @@ class _StartScreenState extends State<StartScreen>
     setState(() => _isStartButtonPressed = isPressed);
   }
 
+  Future<void> _maybeAskForReminderOnFirstLaunch() async {
+    final shouldAsk =
+        await ReminderNotificationService.instance.shouldAskForInitialPrompt();
+    if (!mounted || !shouldAsk) return;
+
+    final s = AppScale.of(context);
+    final bool? enable = await showDialog<bool>(
+      context: context,
+      builder:
+          (dialogContext) => AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(s.r(22)),
+            ),
+            title: Text(
+              'notifications.prompt_title'.tr(),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: s.sp(20),
+                color: Colors.grey[800],
+              ),
+            ),
+            content: Text(
+              'notifications.prompt_description'.tr(args: ['20:00']),
+              style: TextStyle(
+                fontSize: s.sp(14),
+                height: 1.35,
+                color: Colors.grey[700],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(false),
+                child: Text(
+                  'notifications.prompt_not_now'.tr(),
+                  style: TextStyle(
+                    fontSize: s.sp(14),
+                    color: Colors.grey[600],
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.of(dialogContext).pop(true),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFB2E0D8),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(s.r(14)),
+                  ),
+                ),
+                child: Text(
+                  'notifications.prompt_enable'.tr(),
+                  style: TextStyle(
+                    fontSize: s.sp(14),
+                    color: Colors.grey[800],
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+    );
+
+    await ReminderNotificationService.instance.markInitialPromptShown();
+    if (!mounted || enable != true) return;
+    await _enableDailyReminder();
+  }
+
+  Future<bool> _enableDailyReminder() {
+    return ReminderNotificationService.instance.enableDailyReminder(
+      hour: 20,
+      minute: 0,
+      title: 'notifications.daily_reminder_title'.tr(),
+      body: 'notifications.daily_reminder_body'.tr(),
+    );
+  }
+
   Future<void> _showStreakDialog() async {
     await _loadStreakStatus();
     if (!mounted) return;
@@ -529,7 +609,9 @@ class _StartScreenState extends State<StartScreen>
           : 'streak.days_label';
     }
     String? dailyQuestionText = await DailyStreakService.instance
-        .getShownDailyQuestionTextForToday();
+        .getShownDailyQuestionTextForToday(
+          localeCode: context.locale.languageCode,
+        );
     if (dailyQuestionText != null && !dialogAnsweredToday) {
       final updatedStatus = await DailyStreakService.instance.registerDailyAnswer();
       if (!mounted) return;
@@ -537,7 +619,22 @@ class _StartScreenState extends State<StartScreen>
       dialogAnsweredToday = updatedStatus.hasAnsweredToday;
       statusKey = 'streak.status_completed_today';
     }
+    if (dailyQuestionText == null && dialogAnsweredToday) {
+      final localizedQuestion = await _loadDailyQuestionOfTheDay();
+      if (!mounted) return;
+      if (localizedQuestion != null) {
+        dailyQuestionText = localizedQuestion;
+        await DailyStreakService.instance.saveShownDailyQuestionForToday(
+          localizedQuestion,
+          localeCode: context.locale.languageCode,
+        );
+      }
+    }
+    bool reminderEnabled =
+        await ReminderNotificationService.instance.isReminderEnabled();
+    bool isReminderActionLoading = false;
     bool isLoadingDailyQuestion = false;
+    bool isReminderButtonPressed = false;
     bool isShowDailyQuestionPressed = false;
     bool isClosePressed = false;
     if (!mounted) return;
@@ -612,7 +709,7 @@ class _StartScreenState extends State<StartScreen>
                           ],
                         ),
                       ),
-                      SizedBox(height: s.h(12)),
+                      SizedBox(height: s.h(14)),
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: s.w(12)),
                         child: Text(
@@ -697,6 +794,10 @@ class _StartScreenState extends State<StartScreen>
                                                 await DailyStreakService.instance
                                                     .saveShownDailyQuestionForToday(
                                                       questionText,
+                                                      localeCode:
+                                                          context
+                                                              .locale
+                                                              .languageCode,
                                                     );
                                               }
                                               if (!context.mounted) return;
@@ -709,7 +810,12 @@ class _StartScreenState extends State<StartScreen>
                                               });
                                             },
                                     style: OutlinedButton.styleFrom(
-                                      side: BorderSide(color: Colors.grey[300]!),
+                                      backgroundColor: const Color(
+                                        0xFFB2E0D8,
+                                      ).withOpacity(0.2),
+                                      side: const BorderSide(
+                                        color: Color(0xFFB8DFD5),
+                                      ),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(
                                           s.r(12),
@@ -733,8 +839,8 @@ class _StartScreenState extends State<StartScreen>
                                               'streak.show_daily_question'.tr(),
                                               style: TextStyle(
                                                 fontSize: s.sp(14),
-                                                fontWeight: FontWeight.w600,
-                                                color: Colors.grey[700],
+                                                fontWeight: FontWeight.w700,
+                                                color: Colors.grey[800],
                                               ),
                                             ),
                                       ),
@@ -745,13 +851,24 @@ class _StartScreenState extends State<StartScreen>
                                   key: const ValueKey('daily_question_card'),
                                   width: double.infinity,
                                   padding: EdgeInsets.symmetric(
-                                    horizontal: s.w(12),
-                                    vertical: s.h(12),
+                                    horizontal: s.w(14),
+                                    vertical: s.h(13),
                                   ),
                                   decoration: BoxDecoration(
-                                    color: Colors.grey[100],
+                                    color: const Color(
+                                      0xFFB2E0D8,
+                                    ).withOpacity(0.2),
                                     borderRadius: BorderRadius.circular(s.r(12)),
-                                    border: Border.all(color: Colors.grey[300]!),
+                                    border: Border.all(
+                                      color: const Color(0xFFB8DFD5),
+                                    ),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.03),
+                                        blurRadius: s.r(10),
+                                        offset: Offset(0, s.h(2)),
+                                      ),
+                                    ],
                                   ),
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -759,17 +876,17 @@ class _StartScreenState extends State<StartScreen>
                                       Text(
                                         'streak.daily_question_title'.tr(),
                                         style: TextStyle(
-                                          fontSize: s.sp(12),
+                                          fontSize: s.sp(12.5),
                                           fontWeight: FontWeight.w700,
-                                          color: Colors.grey[600],
+                                          color: Colors.grey[700],
                                         ),
                                       ),
                                       SizedBox(height: s.h(6)),
                                       Text(
                                         dailyQuestionText!,
                                         style: TextStyle(
-                                          fontSize: s.sp(14),
-                                          fontWeight: FontWeight.w600,
+                                          fontSize: s.sp(15),
+                                          fontWeight: FontWeight.w700,
                                           height: 1.35,
                                           color: Colors.grey[800],
                                         ),
@@ -786,6 +903,112 @@ class _StartScreenState extends State<StartScreen>
                                     ],
                                   ),
                                 ),
+                      ),
+                      SizedBox(height: s.h(12)),
+                      Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: s.w(12),
+                          vertical: s.h(10),
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[100],
+                          borderRadius: BorderRadius.circular(s.r(12)),
+                          border: Border.all(color: Colors.grey[300]!),
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                reminderEnabled
+                                    ? 'notifications.reminder_enabled_at'.tr(
+                                      args: ['20:00'],
+                                    )
+                                    : 'notifications.reminder_disabled'.tr(),
+                                style: TextStyle(
+                                  fontSize: s.sp(12.5),
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.grey[700],
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: s.w(8)),
+                            Listener(
+                              onPointerDown:
+                                  (_) => setDialogState(
+                                    () => isReminderButtonPressed = true,
+                                  ),
+                              onPointerUp:
+                                  (_) => setDialogState(
+                                    () => isReminderButtonPressed = false,
+                                  ),
+                              onPointerCancel:
+                                  (_) => setDialogState(
+                                    () => isReminderButtonPressed = false,
+                                  ),
+                              child: AnimatedScale(
+                                duration: const Duration(milliseconds: 110),
+                                curve: Curves.easeOutCubic,
+                                scale: isReminderButtonPressed ? 0.97 : 1.0,
+                                child: OutlinedButton(
+                                  onPressed:
+                                      isReminderActionLoading
+                                          ? null
+                                          : () async {
+                                            setDialogState(
+                                              () => isReminderActionLoading = true,
+                                            );
+                                            if (reminderEnabled) {
+                                              await ReminderNotificationService
+                                                  .instance
+                                                  .disableDailyReminder();
+                                              reminderEnabled = false;
+                                            } else {
+                                              reminderEnabled =
+                                                  await _enableDailyReminder();
+                                            }
+                                            if (!context.mounted) return;
+                                            setDialogState(() {
+                                              isReminderActionLoading = false;
+                                              isReminderButtonPressed = false;
+                                            });
+                                          },
+                                  style: OutlinedButton.styleFrom(
+                                    side: BorderSide(color: Colors.grey[300]!),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(
+                                        s.r(10),
+                                      ),
+                                    ),
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: s.w(12),
+                                      vertical: s.h(8),
+                                    ),
+                                  ),
+                                  child:
+                                      isReminderActionLoading
+                                          ? SizedBox(
+                                            width: s.r(14),
+                                            height: s.r(14),
+                                            child: const CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                            ),
+                                          )
+                                          : Text(
+                                            reminderEnabled
+                                                ? 'notifications.turn_off'.tr()
+                                                : 'notifications.turn_on'.tr(),
+                                            style: TextStyle(
+                                              fontSize: s.sp(12),
+                                              fontWeight: FontWeight.w700,
+                                              color: Colors.grey[700],
+                                            ),
+                                          ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),

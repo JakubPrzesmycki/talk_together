@@ -83,6 +83,18 @@
     "daily_question_unavailable": "La pregunta diaria no está disponible temporalmente.",
     "daily_question_hint": "Puedes responder en silencio por tu cuenta o hablarlo con alguien cercano. Lo más importante es la conversación."
   },
+  "notifications": {
+    "prompt_title": "¿Recordatorio diario?",
+    "prompt_description": "Podemos recordarte cada día a las {} la pregunta del día.",
+    "prompt_not_now": "Ahora no",
+    "prompt_enable": "Activar",
+    "daily_reminder_title": "La pregunta del día te espera",
+    "daily_reminder_body": "Abre TalkTogether y empieza una conversación.",
+    "reminder_enabled_at": "Recordatorio diario a las {}",
+    "reminder_disabled": "El recordatorio está desactivado",
+    "turn_on": "Activar",
+    "turn_off": "Desactivar"
+  },
   "categories": {
     "chill": "Relax",
     "family": "Familia",
