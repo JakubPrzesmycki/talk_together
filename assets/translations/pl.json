@@ -8,7 +8,9 @@
     "start": "START",
     "start_game": "Start gry",
     "play_again": "Zagraj ponownie",
-    "select_at_least_one_category": "Wybierz co najmniej 1 kategorię"
+    "select_at_least_one_category": "Wybierz co najmniej 1 kategorię",
+    "need_more_time": "Więcej czasu",
+    "next_short": "Dalej"
   },
   "language": {
     "select_language": "Wybierz język",
@@ -19,12 +21,12 @@
     "apply": "Zastosuj"
   },
   "start_page": {
-    "tagline": "Zacznijmy rozmowę"
+    "tagline": "Let’s get talking"
   },
   "game_settings": {
     "title": "Ustawienia gry",
     "how_to_play": "Jak grać?",
-    "how_to_play_desc": "Wyświetli się pytanie z dwiema opcjami. Każdy gracz głosuje, a po zakończeniu głosowania wyświetlają się wyniki i rozpoczyna rozmowa!",
+    "how_to_play_desc": "Odpowiedz na pytanie, wybierz jedną z dwóch opcji i anonimowo zagłosuj. Wyniki to dopiero początek. Najważniejszym elementem jest rozmowa, która zaczyna się później!",
     "players": "Liczba graczy",
     "discussion_time": "Czas rozmowy (minuty)"
   },
@@ -42,7 +44,10 @@
     "discussion_time": "Czas na rozmowę",
     "time_up": "Czas minął!",
     "exit_title": "Zakończyć grę?",
-    "exit_message": "Zobaczysz podsumowanie sesji."
+    "exit_message": "Zobaczysz podsumowanie sesji.",
+    "extend_title": "Kontynuować rozmowę?",
+    "extend_message": "Czas minął. Czy potrzebujecie więcej czasu na tę rozmowę?",
+    "extra_time": "Dodatkowy czas"
   },
   "summary": {
     "title": "Podsumowanie sesji",
@@ -54,14 +59,50 @@
     "full_agreement": "Pełna zgodność! W tej sesji byliście wyjątkowo jednomyślni.",
     "all_categories_similar": "We wszystkich kategoriach mieliście podobny poziom zgodności.",
     "most_agreement": "Najwięcej zgodności mieliście w kategorii: {}",
-    "most_difference": "Najwięcej różnic było przy pytaniach: {}"
+    "most_difference": "Najwięcej różnic było przy pytaniach: {}",
+    "extended_single": "Przedłużaliście rozmowę w kategorii: {}",
+    "extended_multiple": "Przedłużaliście rozmowy w kategoriach: {}",
+    "extended_top": "Najczęściej przedłużana kategoria: {} ({}x)",
+    "talk_time_stats": "Średni czas rozmowy: {}  |  Najdłuższa: {}",
+    "full_agreement_count_one": "{} pytanie zakończyło się pełną zgodą.",
+    "full_agreement_count_other": "{} pytań zakończyło się pełną zgodą.",
+    "full_agreement_none": "W tej sesji nie było pytań z pełną zgodą."
+  },
+  "streak": {
+    "title": "Daily Streak",
+    "day_label_singular": "dzień z rzędu",
+    "days_label": "dni z rzędu",
+    "status_completed_today": "Dzisiejsze pytanie już za Tobą.",
+    "status_start_today": "Zacznij swoją serię rozmów już dziś.",
+    "status_ready_today": "Dziś możesz przedłużyć swoją serię.",
+    "description": "Jedna odpowiedź dziennie pomaga utrzymać rytm rozmów i budować codzienną regularność.",
+    "close": "Zamknij",
+    "answer_today": "Odpowiedz dziś",
+    "show_daily_question": "Zobacz dzisiejsze pytanie",
+    "daily_question_title": "Pytanie na dziś",
+    "daily_question_unavailable": "Dzienne pytanie jest chwilowo niedostępne.",
+    "daily_question_hint": "Możesz odpowiedzieć sam(a) w ciszy albo porozmawiać z kimś bliskim."
+  },
+  "notifications": {
+    "prompt_title": "Codzienne przypomnienie?",
+    "prompt_description": "Możemy codziennie o {} przypomnieć Ci o pytaniu dnia.",
+    "prompt_not_now": "Nie teraz",
+    "prompt_enable": "Włącz",
+    "daily_reminder_title": "Pytanie dnia czeka",
+    "daily_reminder_body": "Otwórz TalkTogether i zacznij rozmowę.",
+    "reminder_enabled_at": "Przypomnienie codziennie o {}",
+    "reminder_disabled": "Przypomnienie jest wyłączone",
+    "turn_on": "Włącz",
+    "turn_off": "Wyłącz",
+    "open_settings": "Otwórz ustawienia",
+    "enable_in_settings_hint": "Włącz powiadomienia dla TalkTogether w ustawieniach systemu, potem spróbuj ponownie."
   },
   "categories": {
-    "na_luzie": "Na luzie",
-    "rodzinne": "Rodzinne",
-    "znajomi": "Znajomi",
-    "pikantne": "Pikantne",
-    "szalone": "Szalone",
-    "glebokie": "Głębokie"
+    "chill": "Na luzie",
+    "family": "Rodzinne",
+    "party": "Impreza",
+    "spicy": "Pikantne",
+    "wild": "Szalone",
+    "deep": "Głębokie"
   }
 }

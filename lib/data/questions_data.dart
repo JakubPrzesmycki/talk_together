@@ -1,112 +1,111 @@
+import 'dart:convert';
+import 'package:flutter/services.dart';
 import '../models/question.dart';
 
 class QuestionsData {
-  static Map<String, List<Question>> questions = {
-    'Na luzie': [
-      Question(
-        text: 'Film w domu czy wyjście do kina?',
-        option1: 'Film w domu',
-        option2: 'Wyjście do kina',
-      ),
-      Question(
-        text: 'Morze czy góry?',
-        option1: 'Morze',
-        option2: 'Góry',
-      ),
-      Question(
-        text: 'Pizza czy burger?',
-        option1: 'Pizza',
-        option2: 'Burger',
-      ),
-    ],
-    'Rodzinne': [
-      Question(
-        text: 'Gra planszowa czy karcianka?',
-        option1: 'Gra planszowa',
-        option2: 'Karcianka',
-      ),
-      Question(
-        text: 'Wspólne gotowanie czy zamówienie jedzenia?',
-        option1: 'Wspólne gotowanie',
-        option2: 'Zamówienie jedzenia',
-      ),
-      Question(
-        text: 'Wycieczka rowerowa czy spacer?',
-        option1: 'Wycieczka rowerowa',
-        option2: 'Spacer',
-      ),
-    ],
-    'Znajomi': [
-      Question(
-        text: 'Impreza w domu czy w klubie?',
-        option1: 'W domu',
-        option2: 'W klubie',
-      ),
-      Question(
-        text: 'Karaoke czy quiz?',
-        option1: 'Karaoke',
-        option2: 'Quiz',
-      ),
-      Question(
-        text: 'Grill czy restauracja?',
-        option1: 'Grill',
-        option2: 'Restauracja',
-      ),
-    ],
-    'Pikantne': [
-      Question(
-        text: 'Randka w ciemno czy speed dating?',
-        option1: 'Randka w ciemno',
-        option2: 'Speed dating',
-      ),
-      Question(
-        text: 'Pocałunek czy przytulenie?',
-        option1: 'Pocałunek',
-        option2: 'Przytulenie',
-      ),
-      Question(
-        text: 'Romantyczny wieczór czy spontaniczna przygoda?',
-        option1: 'Romantyczny wieczór',
-        option2: 'Spontaniczna przygoda',
-      ),
-    ],
-    'Szalone': [
-      Question(
-        text: 'Skok na bungee czy skydiving?',
-        option1: 'Bungee',
-        option2: 'Skydiving',
-      ),
-      Question(
-        text: 'Tatuaż czy piercing?',
-        option1: 'Tatuaż',
-        option2: 'Piercing',
-      ),
-      Question(
-        text: 'Podróż autostopem czy backpacking?',
-        option1: 'Autostop',
-        option2: 'Backpacking',
-      ),
-    ],
-    'Głębokie': [
-      Question(
-        text: 'Szczęście czy sukces?',
-        option1: 'Szczęście',
-        option2: 'Sukces',
-      ),
-      Question(
-        text: 'Przeszłość czy przyszłość?',
-        option1: 'Przeszłość',
-        option2: 'Przyszłość',
-      ),
-      Question(
-        text: 'Mądrość czy bogactwo?',
-        option1: 'Mądrość',
-        option2: 'Bogactwo',
-      ),
-    ],
+  static const String _fallbackLocale = 'en';
+  static const String _questionsPath = 'assets/questions';
+  static const String _fallbackCategoryId = 'chill';
+
+  static const Set<String> _categoryIds = {
+    'chill',
+    'family',
+    'party',
+    'spicy',
+    'wild',
+    'deep',
+    'daily',
   };
 
-  static List<Question> getQuestionsByCategory(String category) {
-    return questions[category] ?? questions['Na luzie']!;
+  static final Map<String, Map<String, List<Question>>> _cache = {};
+
+  static Future<List<Question>> getQuestionsByCategory({
+    required String categoryName,
+    required String localeCode,
+  }) async {
+    final categoryId =
+        _categoryIds.contains(categoryName) ? categoryName : _fallbackCategoryId;
+    final localizedData = await _loadQuestionsForLocale(localeCode);
+    final localizedQuestions = localizedData[categoryId];
+    if (localizedQuestions != null && localizedQuestions.isNotEmpty) {
+      return localizedQuestions;
+    }
+
+    final fallbackData = await _loadQuestionsForLocale(_fallbackLocale);
+    final fallbackQuestions = fallbackData[categoryId];
+    if (fallbackQuestions != null && fallbackQuestions.isNotEmpty) {
+      return fallbackQuestions;
+    }
+
+    return fallbackData[_fallbackCategoryId] ?? const [];
+  }
+
+  static Future<Question?> getDailyQuestionForDate({
+    required String localeCode,
+    DateTime? now,
+  }) async {
+    final dailyQuestions = await getQuestionsByCategory(
+      categoryName: 'daily',
+      localeCode: localeCode,
+    );
+    if (dailyQuestions.isEmpty) return null;
+
+    final localNow = (now ?? DateTime.now()).toLocal();
+    final daySeed = _dailySeedForDate(localNow);
+    final index = daySeed % dailyQuestions.length;
+
+    if (dailyQuestions.length < 2) {
+      return dailyQuestions[index];
+    }
+
+    final previousDay = localNow.subtract(const Duration(days: 1));
+    final previousDaySeed = _dailySeedForDate(previousDay);
+    final previousIndex = previousDaySeed % dailyQuestions.length;
+    final safeIndex = index == previousIndex
+        ? (index + 1) % dailyQuestions.length
+        : index;
+    return dailyQuestions[safeIndex];
+  }
+
+  static int _dailySeedForDate(DateTime date) {
+    return date.year * 1000 + date.month * 50 + date.day;
+  }
+
+  static Future<Map<String, List<Question>>> _loadQuestionsForLocale(
+    String localeCode,
+  ) async {
+    if (_cache.containsKey(localeCode)) {
+      return _cache[localeCode]!;
+    }
+
+    try {
+      final jsonString = await rootBundle.loadString(
+        '$_questionsPath/$localeCode.json',
+      );
+      final decoded = jsonDecode(jsonString) as Map<String, dynamic>;
+      final categories = decoded['categories'] as Map<String, dynamic>? ?? {};
+
+      final parsed = <String, List<Question>>{};
+      for (final entry in categories.entries) {
+        final rawList = entry.value as List<dynamic>? ?? const [];
+        parsed[entry.key] = rawList
+            .whereType<Map>()
+            .map((item) => item.map((k, v) => MapEntry('$k', v)))
+            .map(Question.fromJson)
+            .where(
+              (q) =>
+                  q.text.isNotEmpty &&
+                  q.option1.isNotEmpty &&
+                  q.option2.isNotEmpty,
+            )
+            .toList();
+      }
+
+      _cache[localeCode] = parsed;
+      return parsed;
+    } catch (_) {
+      _cache[localeCode] = {};
+      return _cache[localeCode]!;
+    }
   }
 }

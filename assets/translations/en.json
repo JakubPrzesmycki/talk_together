@@ -8,7 +8,9 @@
     "start": "START",
     "start_game": "Start game",
     "play_again": "Play again",
-    "select_at_least_one_category": "Select at least 1 category"
+    "select_at_least_one_category": "Select at least 1 category",
+    "need_more_time": "More time",
+    "next_short": "Next"
   },
   "language": {
     "select_language": "Select language",
@@ -19,12 +21,12 @@
     "apply": "Apply"
   },
   "start_page": {
-    "tagline": "Let's start the conversation"
+    "tagline": "Let’s get talking"
   },
   "game_settings": {
     "title": "Game settings",
     "how_to_play": "How to play?",
-    "how_to_play_desc": "A question with two options will appear. Each player votes, then results are shown and discussion starts!",
+    "how_to_play_desc": "Pick one of two options and vote anonymously. The results are just the beginning. What truly matters is the conversation that comes next!",
     "players": "Number of players",
     "discussion_time": "Discussion time (minutes)"
   },
@@ -42,7 +44,10 @@
     "discussion_time": "Discussion time",
     "time_up": "Time is up!",
     "exit_title": "Leave game?",
-    "exit_message": "You will see the session summary."
+    "exit_message": "You will see the session summary.",
+    "extend_title": "Continue conversation?",
+    "extend_message": "Time is up. Do you need more time for this conversation?",
+    "extra_time": "Extra time"
   },
   "summary": {
     "title": "Session summary",
@@ -54,14 +59,50 @@
     "full_agreement": "Perfect alignment! You were exceptionally unanimous in this session.",
     "all_categories_similar": "Across all categories, your agreement level was similar.",
     "most_agreement": "Most agreement in category: {}",
-    "most_difference": "Most differences in category: {}"
+    "most_difference": "Most differences in category: {}",
+    "extended_single": "You extended the discussion in category: {}",
+    "extended_multiple": "You extended discussions in categories: {}",
+    "extended_top": "Most extended discussions: {} ({}x)",
+    "talk_time_stats": "Average talk time: {}  |  Longest: {}",
+    "full_agreement_count_one": "{} question ended with full agreement.",
+    "full_agreement_count_other": "{} questions ended with full agreement.",
+    "full_agreement_none": "No questions ended with full agreement in this session."
+  },
+  "streak": {
+    "title": "Daily Streak",
+    "day_label_singular": "day in a row",
+    "days_label": "days in a row",
+    "status_completed_today": "Today's question is already behind you.",
+    "status_start_today": "Start your streak of conversations today.",
+    "status_ready_today": "You can continue your streak today.",
+    "description": "One answer a day helps keep the rhythm of conversations going.",
+    "close": "Close",
+    "answer_today": "Answer today",
+    "show_daily_question": "See today's question",
+    "daily_question_title": "Question of the day",
+    "daily_question_unavailable": "Today's question is temporarily unavailable.",
+    "daily_question_hint": "You can answer quietly on your own or talk it through with someone close to you."
+  },
+  "notifications": {
+    "prompt_title": "Daily reminder?",
+    "prompt_description": "We can remind you every day at {} about the question of the day.",
+    "prompt_not_now": "Not now",
+    "prompt_enable": "Enable",
+    "daily_reminder_title": "Question of the day is waiting",
+    "daily_reminder_body": "Open TalkTogether and start a conversation.",
+    "reminder_enabled_at": "Reminder every day at {}",
+    "reminder_disabled": "Reminder is off",
+    "turn_on": "Turn on",
+    "turn_off": "Turn off",
+    "open_settings": "Open settings",
+    "enable_in_settings_hint": "Enable notifications for TalkTogether in system settings, then try again."
   },
   "categories": {
-    "na_luzie": "Chill",
-    "rodzinne": "Family",
-    "znajomi": "Friends",
-    "pikantne": "Spicy",
-    "szalone": "Wild",
-    "glebokie": "Deep"
+    "chill": "Chill",
+    "family": "Family",
+    "party": "Party",
+    "spicy": "Spicy",
+    "wild": "Wild",
+    "deep": "Deep"
   }
 }
