@@ -20,21 +20,21 @@ class CategorySelectionScreen extends StatefulWidget {
 class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
   final Set<String> selectedCategories = {};
   static const Map<String, String> _categoryTranslationKeys = {
-    'Na luzie': 'categories.na_luzie',
-    'Rodzinne': 'categories.rodzinne',
-    'Znajomi': 'categories.znajomi',
-    'Pikantne': 'categories.pikantne',
-    'Szalone': 'categories.szalone',
-    'Głębokie': 'categories.glebokie',
+    'chill': 'categories.chill',
+    'family': 'categories.family',
+    'party': 'categories.party',
+    'spicy': 'categories.spicy',
+    'wild': 'categories.wild',
+    'deep': 'categories.deep',
   };
-  
+
   final Map<String, CategoryData> categories = {
-    'Na luzie': CategoryData('😎', const Color(0xFFB2E0D8)),
-    'Rodzinne': CategoryData('👨‍👩‍👧‍👦', const Color(0xFFFFD4B8)),
-    'Znajomi': CategoryData('🎉', const Color(0xFFFFF4B8)),
-    'Pikantne': CategoryData('🌶️', const Color(0xFFFFB8C6)),
-    'Szalone': CategoryData('🤪', const Color(0xFFD4B8FF)),
-    'Głębokie': CategoryData('💭', const Color(0xFFB8D4FF)),
+    'chill': CategoryData('😎', const Color(0xFFB2E0D8)),
+    'family': CategoryData('🏠', const Color(0xFFB8D4FF)),
+    'party': CategoryData('🎉', const Color(0xFFFFF4B8)),
+    'spicy': CategoryData('🌶️', const Color(0xFFFFB8C6)),
+    'wild': CategoryData('🤪', const Color(0xFFD4B8FF)),
+    'deep': CategoryData('💭', const Color(0xFFFFD4B8)),
   };
 
   void _toggleCategory(String category) {
@@ -136,29 +136,19 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
               
               // Categories Grid
               Expanded(
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    return Center(
-                      child: SizedBox(
-                        width: constraints.maxWidth,
-                        child: GridView.count(
-                          crossAxisCount: crossAxisCount,
-                          crossAxisSpacing: s.w(16),
-                          mainAxisSpacing: s.h(16),
-                          childAspectRatio: gridAspectRatio,
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          children: categories.entries.map((entry) {
-                            return _buildCategoryCard(
-                              entry.key,
-                              entry.value.emoji,
-                              entry.value.color,
-                            );
-                          }).toList(),
-                        ),
-                      ),
+                child: GridView.count(
+                  crossAxisCount: crossAxisCount,
+                  crossAxisSpacing: s.w(16),
+                  mainAxisSpacing: s.h(16),
+                  childAspectRatio: gridAspectRatio,
+                  physics: const ClampingScrollPhysics(),
+                  children: categories.entries.map((entry) {
+                    return _buildCategoryCard(
+                      entry.key,
+                      entry.value.emoji,
+                      entry.value.color,
                     );
-                  },
+                  }).toList(),
                 ),
               ),
               
@@ -209,7 +199,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
     final s = AppScale.of(context);
     final isSelected = selectedCategories.contains(title);
     
-    Color _darkenColor(Color color, [double amount = 0.2]) {
+    Color darkenColor(Color color, [double amount = 0.2]) {
       final hsl = HSLColor.fromColor(color);
       final lightness = (hsl.lightness - amount).clamp(0.0, 1.0);
       return hsl.withLightness(lightness).toColor();
@@ -222,7 +212,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
           color: color,
           borderRadius: BorderRadius.circular(s.r(24)),
           border: isSelected
-              ? Border.all(color: _darkenColor(color), width: s.r(4))
+              ? Border.all(color: darkenColor(color), width: s.r(4))
               : null,
           boxShadow: [
             BoxShadow(

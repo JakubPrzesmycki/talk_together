@@ -8,7 +8,9 @@
     "start": "DÉMARRER",
     "start_game": "Lancer la partie",
     "play_again": "Rejouer",
-    "select_at_least_one_category": "Sélectionnez au moins 1 catégorie"
+    "select_at_least_one_category": "Sélectionnez au moins 1 catégorie",
+    "need_more_time": "Plus de temps",
+    "next_short": "Suivante"
   },
   "language": {
     "select_language": "Choisir la langue",
@@ -19,7 +21,7 @@
     "apply": "Appliquer"
   },
   "start_page": {
-    "tagline": "Commençons la conversation"
+    "tagline": "Let’s get talking"
   },
   "game_settings": {
     "title": "Paramètres du jeu",
@@ -42,7 +44,10 @@
     "discussion_time": "Temps de discussion",
     "time_up": "Temps écoulé !",
     "exit_title": "Quitter la partie ?",
-    "exit_message": "Vous verrez le résumé de la session."
+    "exit_message": "Vous verrez le résumé de la session.",
+    "extend_title": "Continuer la discussion ?",
+    "extend_message": "Le temps est écoulé. Avez-vous besoin de plus de temps pour cette discussion ?",
+    "extra_time": "Temps supplémentaire"
   },
   "summary": {
     "title": "Résumé de session",
@@ -54,14 +59,50 @@
     "full_agreement": "Accord total ! Vous avez été particulièrement unanimes.",
     "all_categories_similar": "Dans toutes les catégories, votre niveau d'accord était similaire.",
     "most_agreement": "Le plus d'accord dans la catégorie : {}",
-    "most_difference": "Le plus de différences dans la catégorie : {}"
+    "most_difference": "Le plus de différences dans la catégorie : {}",
+    "extended_single": "Vous avez prolongé la discussion dans la catégorie : {}",
+    "extended_multiple": "Vous avez prolongé les discussions dans les catégories : {}",
+    "extended_top": "Catégorie la plus prolongée : {} ({}x)",
+    "talk_time_stats": "Temps moyen de discussion : {}  |  La plus longue : {}",
+    "full_agreement_count_one": "{} question s'est terminée en accord total.",
+    "full_agreement_count_other": "{} questions se sont terminées en accord total.",
+    "full_agreement_none": "Aucune question ne s'est terminée en accord total pendant cette session."
+  },
+  "streak": {
+    "title": "Série quotidienne",
+    "day_label_singular": "jour d'affilée",
+    "days_label": "jours d'affilée",
+    "status_completed_today": "Parfait, la réponse d'aujourd'hui est déjà comptée.",
+    "status_start_today": "Commence ta série de conversations aujourd'hui.",
+    "status_ready_today": "Aujourd'hui, vous pouvez prolonger votre série.",
+    "description": "Une réponse par jour aide à garder une habitude saine de conversations quotidiennes.",
+    "close": "Fermer",
+    "answer_today": "Répondre aujourd'hui",
+    "show_daily_question": "Afficher la question du jour",
+    "daily_question_title": "Question du jour",
+    "daily_question_unavailable": "La question du jour est temporairement indisponible.",
+    "daily_question_hint": "Tu peux répondre seul(e) en silence ou en parler avec un proche. Le plus important, c'est la conversation."
+  },
+  "notifications": {
+    "prompt_title": "Rappel quotidien ?",
+    "prompt_description": "Nous pouvons te rappeler chaque jour à {} la question du jour.",
+    "prompt_not_now": "Pas maintenant",
+    "prompt_enable": "Activer",
+    "daily_reminder_title": "La question du jour t'attend",
+    "daily_reminder_body": "Ouvre TalkTogether et lance une conversation.",
+    "reminder_enabled_at": "Rappel tous les jours à {}",
+    "reminder_disabled": "Le rappel est désactivé",
+    "turn_on": "Activer",
+    "turn_off": "Désactiver",
+    "open_settings": "Ouvrir les paramètres",
+    "enable_in_settings_hint": "Active les notifications pour TalkTogether dans les paramètres, puis réessaie."
   },
   "categories": {
-    "na_luzie": "Détente",
-    "rodzinne": "Famille",
-    "znajomi": "Amis",
-    "pikantne": "Épicé",
-    "szalone": "Folie",
-    "glebokie": "Profondes"
+    "chill": "Détente",
+    "family": "Famille",
+    "party": "Fête",
+    "spicy": "Épicé",
+    "wild": "Folie",
+    "deep": "Profondes"
   }
 }

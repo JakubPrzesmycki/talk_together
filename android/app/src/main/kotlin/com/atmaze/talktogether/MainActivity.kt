@@ -1,4 +1,4 @@
-package com.example.talk_together
+package com.atmaze.talktogether
 
 import io.flutter.embedding.android.FlutterActivity
 
